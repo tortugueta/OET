@@ -2,8 +2,8 @@
 #	acceptable when I actually want to reset the scene, but when I change the
 #	scale or invert the colors I don't want that. THIS STILL DOESN' WORK
 #	PROPERLY. 
+#FIXME: Jitter of the angle whenever I change any property of the wheel.
 #TODO: The reset button should recreate the graphics dialog if it has been killed
-#TODO: Add control to change the thickness of the line
 
 import sys
 import math
@@ -42,6 +42,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 
 		# A few initial values
 		self.scale = self.scaleSpinBox.value()
+		self.thickness = self.thicknessSpinBox.value()
 		self.angularVelocity = self.speedSpinBox.value()
 		self.distance = self.distanceSpinBox.value()
 		self.viscosity = self.viscositySpinBox.value()
@@ -65,7 +66,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.actionInvert, SIGNAL("toggled(bool)"),
 			self.switchColor)
 		self.connect(self.scaleSpinBox, SIGNAL("valueChanged(double)"), 
-			self.changeScale)
+			self.setScale)
+		self.connect(self.thicknessSpinBox, SIGNAL("valueChanged(double)"), 
+			self.setThickness)
 		self.connect(self.speedSpinBox, SIGNAL("valueChanged(double)"), 
 			self.setAngularVelocity)
 		self.connect(self.distanceSpinBox, SIGNAL("valueChanged(double)"), 
@@ -90,9 +93,13 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.graphWin.graphicsView.setScene(self.scene)
 
 		# Create the items
-		self.vline = VerticalLine(0, -50, 100, 10, self.foregroundBrush)
-		self.hline = HorizontalLine(-50, 0, 100, 10, self.foregroundBrush)
-		self.circle = Circle(0, 0, 50, 10, self.foregroundBrush)
+		self.vline = VerticalLine(0, -50+self.thickness/2, 100-self.thickness,
+			self.thickness,
+			self.foregroundBrush)
+		self.hline = HorizontalLine(-50+self.thickness/2, 0, 100-self.thickness,
+			self.thickness,
+			self.foregroundBrush)
+		self.circle = Circle(0, 0, 50, self.thickness, self.foregroundBrush)
 		self.wheel = QGraphicsItemGroup()
 		self.scene.addItem(self.wheel)
 		
@@ -144,12 +151,20 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		self.createSceneWheel()
 	
-	def changeScale(self, scale):
+	def setScale(self, scale):
 		"""
 		Change the scale of the scene
 		"""
 		
 		self.scale = scale
+		self.createSceneWheel()
+	
+	def setThickness(self, thickness):
+		"""
+		Change the thickness of the lines
+		"""
+		
+		self.thickness = thickness
 		self.createSceneWheel()
 	
 	def reset(self):
