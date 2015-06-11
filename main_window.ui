@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>189</width>
-    <height>784</height>
+    <width>434</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,9 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout_12">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -145,33 +145,6 @@
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_10">
-        <item>
-         <widget class="QLabel" name="densityLabel">
-          <property name="text">
-           <string>Bead density (g/cm3)</string>
-          </property>
-          <property name="buddy">
-           <cstring>densitySpinBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="densitySpinBox">
-          <property name="toolTip">
-           <string>The density of the bead in g/cm3</string>
-          </property>
-          <property name="decimals">
-           <number>3</number>
-          </property>
-          <property name="maximum">
-           <double>100.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QLabel" name="pRadiusLabel">
@@ -196,6 +169,33 @@
           </property>
           <property name="value">
            <double>10.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <widget class="QLabel" name="densityLabel">
+          <property name="text">
+           <string>Bead density (g/cm3)</string>
+          </property>
+          <property name="buddy">
+           <cstring>densitySpinBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="densitySpinBox">
+          <property name="toolTip">
+           <string>The density of the bead in g/cm3</string>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -228,19 +228,10 @@
         </item>
        </layout>
       </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>23</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_12">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
@@ -772,67 +763,78 @@
         </item>
        </layout>
       </item>
-      <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+     </layout>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="engagePushButton">
+        <property name="toolTip">
+         <string>Start the animation</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>13</height>
-         </size>
+        <property name="text">
+         <string>Engage</string>
         </property>
-       </spacer>
+       </widget>
       </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="engagePushButton">
-          <property name="toolTip">
-           <string>Start the animation</string>
-          </property>
-          <property name="text">
-           <string>Engage</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stopPushButton">
-          <property name="toolTip">
-           <string>Stop the animation</string>
-          </property>
-          <property name="text">
-           <string>Stop</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="resetPushButton">
-          <property name="toolTip">
-           <string>Reset the rotation of the figure to zero</string>
-          </property>
-          <property name="text">
-           <string>Reset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="stopPushButton">
+        <property name="toolTip">
+         <string>Stop the animation</string>
+        </property>
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="resetPushButton">
+        <property name="toolTip">
+         <string>Reset the rotation of the figure to zero</string>
+        </property>
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="recordPushButton">
+        <property name="toolTip">
+         <string>Record the current parameters to file</string>
+        </property>
+        <property name="text">
+         <string>Record</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
+    <item row="2" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
    </layout>
    <zorder></zorder>
-   <zorder>densityLabel</zorder>
-   <zorder>densitySpinBox</zorder>
-   <zorder>layoutWidget</zorder>
+   <zorder>verticalSpacer</zorder>
+   <zorder></zorder>
+   <zorder></zorder>
+   <zorder></zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>189</width>
+     <width>434</width>
      <height>27</height>
     </rect>
    </property>
