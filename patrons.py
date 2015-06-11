@@ -3,7 +3,7 @@
 #	scale or invert the colors I don't want that. THIS STILL DOESN' WORK
 #	PROPERLY. 
 #FIXME: Jitter of the angle whenever I change any property of the wheel.
-#TODO: The reset button should recreate the graphics dialog if it has been killed
+#TODO: Add functionality to record all the parameters to a file when a "record" button is pressed
 
 import sys
 import math
@@ -41,8 +41,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.thickness = self.thicknessSpinBox.value()
 		self.angularVelocity = self.speedSpinBox.value()
 		self.distance = self.distanceSpinBox.value()
-		self.viscosity = self.viscositySpinBox.value()
+		self.density = self.densitySpinBox.value()
 		self.pradius = self.pradiusSpinBox.value()
+		self.viscosity = self.viscositySpinBox.value()
 		self.updateCalculations()
 		self.angle = 0.0
 		
@@ -72,6 +73,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			self.setAngularVelocity)
 		self.connect(self.distanceSpinBox, SIGNAL("valueChanged(double)"), 
 			self.setDistance)
+		self.connect(self.densitySpinBox, SIGNAL("valueChanged(double)"), 
+			self.setDensity)
 		self.connect(self.pradiusSpinBox, SIGNAL("valueChanged(double)"), 
 			self.setPRadius)
 		self.connect(self.viscositySpinBox, SIGNAL("valueChanged(double)"), 
@@ -194,6 +197,14 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.distance = distance
 		self.updateCalculations()
 		
+	def setDensity(self, density):
+		"""
+		Change the density of the particle
+		"""
+		
+		self.density = density
+		self.updateCalculations()
+		
 	def setPRadius(self, radius):
 		"""
 		Set the radius of the particle
@@ -216,17 +227,27 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		"""
 		
 		# Calculate the linear velocity. Convert rps to rad/s
-		self.linearVelocity = self.angularVelocity * 2 * math.pi * self.distance
+		self.angularVelocitySI = self.angularVelocity * 2 * math.pi			 # From rps to rad/s
+		self.linearVelocity = self.angularVelocitySI * self.distance		 # In um/s
 		self.linVelocityLcdNumber.display(self.linearVelocity)
 		
 		# Calculate the DEP, which, at constant velocity, will be exactly the
 		# same as the drag force. Pay attention to the units.
-		self.viscositySI = self.viscosity * 1e-3
-		self.pradiusSI = self.pradius * 1e-6
-		self.linearVelocitySI = self.linearVelocity * 1e-6
+		self.viscositySI = self.viscosity * 1e-3                             # From mPa s to Pa s
+		self.pradiusSI = self.pradius * 1e-6                                 # From um to m
+		self.linearVelocitySI = self.linearVelocity * 1e-6                   # From um/s to m/s
 		self.depSI = 6 * math.pi * self.viscositySI * self.pradiusSI * \
-			self.linearVelocitySI
-		self.forceLcdNumber.display(self.depSI * 1e12)		
+			self.linearVelocitySI											 # In N
+		self.forceLcdNumber.display(self.depSI * 1e12)                       # From N to pN
+		
+		# Calculate the centripetal force. Attention to the units
+		self.distanceSI = self.distance * 1e-6								 # From um to m
+		self.densitySI = self.density * 1e3                                  # From g/cm3 to Kg/m3
+		self.beadVolumeSI = 4 * math.pi * self.pradiusSI**3 / 3				 # In m3
+		self.beadMassSI = self.densitySI * self.beadVolumeSI				 # In Kg
+		self.centripetalForceSI = self.beadMassSI * \
+			self.angularVelocitySI**2 * self.distanceSI						 # In N
+		self.centripetalLcdNumber.display(self.centripetalForceSI * 1e12)    # From N to pN
 
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
