@@ -31,10 +31,6 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.msg_running = 'Press the "Stop" button to stop the animation'
 		self.statusbar.showMessage(self.msg_stopped)
 		
-		# Create the dialog that will show the graphics window
-		self.graphWin = GraphicsWindow(parent=self)
-		self.graphWin.show()
-		
 		# Here I define the brushes that will be used for the background and
 		# foreground objects in the scene
 		self.backgroundBrush = QBrush(Qt.black)
@@ -60,6 +56,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.rotation = QGraphicsItemAnimation()
 		self.rotation.setTimeLine(self.timer)
 
+		# Create the dialog that will show the graphics window
+		self.graphWin = GraphicsWindow(parent=self)
+		self.graphWin.show()
 		self.createSceneWheel()
 
 		# Connections
@@ -171,10 +170,13 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		"""
 		Reset the scene to the initial value
 		"""
-		
+
+		self.graphWin.close()
+		self.graphWin = GraphicsWindow(parent=self)
+		self.graphWin.show()
 		self.angle = 0
 		self.createSceneWheel()
-		
+				
 	def stopTimer(self):
 		"""
 		Stop the animation
