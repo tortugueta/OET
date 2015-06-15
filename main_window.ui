@@ -26,7 +26,7 @@
         <item>
          <widget class="QLabel" name="scaleLabel">
           <property name="text">
-           <string>Scale</string>
+           <string>&amp;Scale</string>
           </property>
           <property name="buddy">
            <cstring>scaleSpinBox</cstring>
@@ -59,7 +59,7 @@
         <item>
          <widget class="QLabel" name="thicknessLabel">
           <property name="text">
-           <string>Thickness</string>
+           <string>&amp;Thickness</string>
           </property>
           <property name="buddy">
            <cstring>thicknessSpinBox</cstring>
@@ -86,7 +86,7 @@
         <item>
          <widget class="QLabel" name="speedLabel">
           <property name="text">
-           <string>Angular velocity (rps)</string>
+           <string>&amp;Angular velocity (rps)</string>
           </property>
           <property name="buddy">
            <cstring>speedSpinBox</cstring>
@@ -119,7 +119,7 @@
         <item>
          <widget class="QLabel" name="distanceLabel">
           <property name="text">
-           <string>Distance (um)</string>
+           <string>&amp;Distance (um)</string>
           </property>
           <property name="buddy">
            <cstring>distanceSpinBox</cstring>
@@ -149,7 +149,7 @@
         <item>
          <widget class="QLabel" name="pRadiusLabel">
           <property name="text">
-           <string>Bead radius (um)</string>
+           <string>Bead radi&amp;us (um)</string>
           </property>
           <property name="buddy">
            <cstring>pradiusSpinBox</cstring>
@@ -179,7 +179,7 @@
         <item>
          <widget class="QLabel" name="densityLabel">
           <property name="text">
-           <string>Bead density (g/cm3)</string>
+           <string>Bead de&amp;nsity (g/cm3)</string>
           </property>
           <property name="buddy">
            <cstring>densitySpinBox</cstring>
@@ -206,7 +206,7 @@
         <item>
          <widget class="QLabel" name="viscositylabel">
           <property name="text">
-           <string>Dynamic viscosity (mPa s)</string>
+           <string>Dynamic &amp;viscosity (mPa s)</string>
           </property>
           <property name="buddy">
            <cstring>viscositySpinBox</cstring>
@@ -773,7 +773,7 @@
          <string>Start the animation</string>
         </property>
         <property name="text">
-         <string>Engage</string>
+         <string>&amp;Engage</string>
         </property>
        </widget>
       </item>
@@ -783,7 +783,7 @@
          <string>Stop the animation</string>
         </property>
         <property name="text">
-         <string>Stop</string>
+         <string>Sto&amp;p</string>
         </property>
        </widget>
       </item>
@@ -799,11 +799,14 @@
       </item>
       <item row="1" column="1">
        <widget class="QPushButton" name="recordPushButton">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Record the current parameters to file</string>
         </property>
         <property name="text">
-         <string>Record</string>
+         <string>&amp;Record</string>
         </property>
        </widget>
       </item>
@@ -823,7 +826,6 @@
      </spacer>
     </item>
    </layout>
-   <zorder></zorder>
    <zorder>verticalSpacer</zorder>
    <zorder></zorder>
    <zorder></zorder>
@@ -870,12 +872,16 @@
  </widget>
  <tabstops>
   <tabstop>scaleSpinBox</tabstop>
+  <tabstop>thicknessSpinBox</tabstop>
   <tabstop>speedSpinBox</tabstop>
   <tabstop>distanceSpinBox</tabstop>
   <tabstop>pradiusSpinBox</tabstop>
+  <tabstop>densitySpinBox</tabstop>
   <tabstop>viscositySpinBox</tabstop>
   <tabstop>engagePushButton</tabstop>
+  <tabstop>stopPushButton</tabstop>
   <tabstop>resetPushButton</tabstop>
+  <tabstop>recordPushButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
