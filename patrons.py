@@ -6,7 +6,6 @@
 #FIXME: The File -> Quit menu action does not work in Windows
 #FIXME: In Windows the records are written to file when I close the program. I
 #	should add a function to immediately flush the data to file.
-#TODO: Alt+R should activate the record function
 
 import sys
 import math
@@ -40,7 +39,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.filename = ''.join([self.filename, '.dat'])
 		self.statusMsg = self.filename
 		self.statusbar.showMessage(self.statusMsg)
-		self.file = open(self.filename, 'w')
+		self.file = open(self.filename, 'a')
 		
 		# Write the header of the file
 		scaleHead = 'Scale'
@@ -57,6 +56,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			distanceHead, densityHead, pradiusHead, viscosityHead,
 			linearVelocityHead, depHead, centripetalForceHead])
 		self.file.write(header + '\n\n')
+		self.file.flush()
 
 		# Here I define the brushes that will be used for the background and
 		# foreground objects in the scene
@@ -298,6 +298,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			density, pradius, viscosity, linearVelocity, dep,
 			centripetalForce])
 		self.file.write(recordLine + '\n')
+		self.file.flush()
 		
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
