@@ -1,5 +1,12 @@
 #FIXME: Jitter of the angle whenever I change any property of the wheel.
-#FIXME: The File -> Quit menu action does not work in Windows and I don't see why
+#FIXME: The File -> Quit menu action does not work in Windows and I don't see
+#	why
+#FIXME: When I switch tabs and come back to The Wheel, starting the animation
+#	gives a QTimeLine::start: already running message, regardless of wether I
+#	have previously started or not. I don't see where this is coming from.
+#TODO: Add error calculation
+#TODO: Add tabs, one for every test. Activating one tab should create the
+#	corresponding graphics window
 
 import sys
 import math
@@ -26,16 +33,70 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		# Open the file where the records will be saved
 		self.now = datetime.datetime.now()
-		self.dateStr = '-'.join([str(self.now.year), str(self.now.month), str(self.now.day)])
-		self.timeStr = ''.join(['%02d' % self.now.hour, '%02d' % self.now.minute,
-			'%02d' % self.now.second])
+		self.dateStr = '-'.join([str(self.now.year), str(self.now.month),
+			str(self.now.day)])
+		self.timeStr = ''.join(['%02d' % self.now.hour,
+			'%02d' % self.now.minute, '%02d' % self.now.second])
 		self.filename = '_'.join([self.dateStr, self.timeStr])
 		self.filename = ''.join([self.filename, '.dat'])
 		self.statusMsg = self.filename
 		self.statusbar.showMessage(self.statusMsg)
 		self.file = open(self.filename, 'a')
 		
-		# Write the header of the file
+		# Here I define the brushes that will be used for the background and
+		# foreground objects in the scenes. This is common to all scenes.
+		self.backgroundBrush = QBrush(Qt.black)
+		self.foregroundBrush = QBrush(Qt.white)
+
+		# Create the dialog that will show the graphics window
+		self.graphWin = GraphicsWindow(parent=self)
+		self.graphWin.show()
+		
+		# By default start with the wheel
+		self.TheWheel()
+
+		# Global connections
+		self.connect(self.actionInvert, SIGNAL("toggled(bool)"),
+			self.switchColor)
+		self.connect(self,  SIGNAL("destroyed()"), self.file.close)
+		self.connect(self.tabWidget, SIGNAL("currentChanged(int)"), 
+			self.switchTab)
+	
+	def switchTab(self, index):
+		"""
+		What to do when the tab is switched
+		"""
+		
+		self.graphWin.close()
+		self.graphWin = GraphicsWindow(parent=self)
+		self.graphWin.show()
+		
+		if index == 0:
+			self.TheWheel()
+		if index == 1:
+			self.Test2()
+	
+	def switchColor(self, selected):
+		"""
+		If the "invert" option is selected, switch to black on white.
+		"""
+		
+		if selected:
+			self.backgroundBrush = QBrush(Qt.white)
+			self.foregroundBrush = QBrush(Qt.black)
+		else:
+			self.backgroundBrush = QBrush(Qt.black)
+			self.foregroundBrush = QBrush(Qt.white)
+		
+		if self.currentTest == 'The Wheel':
+			self.wheel_createSceneWheel()
+
+	def TheWheel(self):
+		"""
+		This code runs the Wheel test
+		"""
+		
+		# Write the header of the file for this particular test
 		scaleHead = 'Scale'
 		thicknessHead = 'Thickness'
 		angularVelocityHead = 'AngularVelocity (rps)'
@@ -49,65 +110,55 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		header = '\t'.join(['# '+scaleHead, thicknessHead, angularVelocityHead,
 			distanceHead, densityHead, pradiusHead, viscosityHead,
 			linearVelocityHead, depHead, centripetalForceHead])
+		self.file.write('# The Wheel test')
 		self.file.write(header + '\n\n')
 		self.file.flush()
-
-		# Here I define the brushes that will be used for the background and
-		# foreground objects in the scene
-		self.backgroundBrush = QBrush(Qt.black)
-		self.foregroundBrush = QBrush(Qt.white)
-
-		# A few initial values
-		self.scale = self.scaleSpinBox.value()
-		self.thickness = self.thicknessSpinBox.value()
-		self.angularVelocity = self.speedSpinBox.value()
-		self.distance = self.distanceSpinBox.value()
-		self.density = self.densitySpinBox.value()
-		self.pradius = self.pradiusSpinBox.value()
-		self.viscosity = self.viscositySpinBox.value()
-		self.updateCalculations()
-		self.angle = 0.0
 		
+		# A few initial values
+		self.wheel_scale = self.scaleSpinBox.value()
+		self.wheel_thickness = self.thicknessSpinBox.value()
+		self.wheel_angularVelocity = self.speedSpinBox.value()
+		self.wheel_distance = self.distanceSpinBox.value()
+		self.wheel_density = self.densitySpinBox.value()
+		self.wheel_pradius = self.pradiusSpinBox.value()
+		self.wheel_viscosity = self.viscositySpinBox.value()
+		self.wheel_updateCalculations()
+		self.wheel_angle = 0.0
 		
 		# Define the basic variables for the rotation
-		self.timeunit = 0.1
-		self.timer = QTimeLine(self.timeunit * 1000)
-		self.timer.setFrameRange(0, 1)
-		self.timer.setUpdateInterval(1)
-		self.timer.setCurveShape(3)
-		self.rotation = QGraphicsItemAnimation()
-		self.rotation.setTimeLine(self.timer)
-
-		# Create the dialog that will show the graphics window
-		self.graphWin = GraphicsWindow(parent=self)
-		self.graphWin.show()
-		self.createSceneWheel()
-
-		# Connections
-		self.connect(self.actionInvert, SIGNAL("toggled(bool)"),
-			self.switchColor)
+		self.wheel_timeunit = 0.1
+		self.wheel_timer = QTimeLine(self.wheel_timeunit * 1000)
+		self.wheel_timer.setFrameRange(0, 1)
+		self.wheel_timer.setUpdateInterval(1)
+		self.wheel_timer.setCurveShape(3)
+		self.wheel_rotation = QGraphicsItemAnimation()
+		self.wheel_rotation.setTimeLine(self.wheel_timer)
+		
+		# Create the scene
+		self.wheel_createSceneWheel()
+		
+		# Connections specific to The Wheel
 		self.connect(self.scaleSpinBox, SIGNAL("valueChanged(double)"), 
-			self.setScale)
+			self.wheel_setScale)
 		self.connect(self.thicknessSpinBox, SIGNAL("valueChanged(double)"), 
-			self.setThickness)
+			self.wheel_setThickness)
 		self.connect(self.speedSpinBox, SIGNAL("valueChanged(double)"), 
-			self.setAngularVelocity)
+			self.wheel_setAngularVelocity)
 		self.connect(self.distanceSpinBox, SIGNAL("valueChanged(double)"), 
-			self.setDistance)
+			self.wheel_setDistance)
 		self.connect(self.densitySpinBox, SIGNAL("valueChanged(double)"), 
-			self.setDensity)
+			self.wheel_setDensity)
 		self.connect(self.pradiusSpinBox, SIGNAL("valueChanged(double)"), 
-			self.setPRadius)
+			self.wheel_setPRadius)
 		self.connect(self.viscositySpinBox, SIGNAL("valueChanged(double)"), 
-			self.setViscosity)
-		self.connect(self.engagePushButton, SIGNAL("clicked()"), self.rotate)
-		self.connect(self.timer, SIGNAL("finished()"), self.rotate)
-		self.connect(self.stopPushButton, SIGNAL("clicked()"), self.stopTimer)
-		self.connect(self.resetPushButton,  SIGNAL("clicked()"), self.reset)
-		self.connect(self.recordPushButton, SIGNAL("clicked()"), self.record)
-		self.connect(self,  SIGNAL("destroyed()"), self.file.close)
+			self.wheel_setViscosity)
+		self.connect(self.engagePushButton, SIGNAL("clicked()"), self.wheel_rotate)
+		self.connect(self.wheel_timer, SIGNAL("finished()"), self.wheel_rotate)
+		self.connect(self.stopPushButton, SIGNAL("clicked()"), self.wheel_stopTimer)
+		self.connect(self.resetPushButton,  SIGNAL("clicked()"), self.wheel_reset)
+		self.connect(self.recordPushButton, SIGNAL("clicked()"), self.wheel_record)
 
-	def createSceneWheel(self):
+	def wheel_createSceneWheel(self):
 		"""
 		This function creates the figures and adds them to the scene
 		"""
@@ -118,13 +169,14 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.graphWin.graphicsView.setScene(self.scene)
 
 		# Create the items
-		self.vline = VerticalLine(0, -50+self.thickness/2, 100-self.thickness,
-			self.thickness,
+		self.vline = VerticalLine(0, -50+self.wheel_thickness/2,
+			100-self.wheel_thickness, self.wheel_thickness,
 			self.foregroundBrush)
-		self.hline = HorizontalLine(-50+self.thickness/2, 0, 100-self.thickness,
-			self.thickness,
+		self.hline = HorizontalLine(-50+self.wheel_thickness/2, 0,
+			100-self.wheel_thickness, self.wheel_thickness,
 			self.foregroundBrush)
-		self.circle = Circle(0, 0, 50, self.thickness, self.foregroundBrush)
+		self.circle = Circle(0, 0, 50, self.wheel_thickness,
+			self.foregroundBrush)
 		self.wheel = QGraphicsItemGroup()
 		self.scene.addItem(self.wheel)
 		
@@ -133,65 +185,51 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.wheel.addToGroup(self.circle)
 		
 		# Set the scale and rotation
-		self.wheel.setScale(self.scale)
-		self.wheel.setRotation(self.angle)		
+		self.wheel.setScale(self.wheel_scale)
+		self.wheel.setRotation(self.wheel_angle)		
 		
 		# Add the item to the rotation animation
-		self.rotation.setItem(self.wheel)
+		self.wheel_rotation.setItem(self.wheel)
 
 	
-	def rotate(self):
+	def wheel_rotate(self):
 		"""
 		Execute a rotation at speed revolutions per second
 		"""
 		
-		self.rotation.setRotationAt(0, self.angle)
-		self.rotation.setRotationAt(1, 
-			self.angle + self.angularVelocity * 360 * self.timeunit)
-		self.angle += self.angularVelocity * 360 * self.timeunit
-		if self.angle >= 360:
-			self.angle -= 360
-		self.timer.start()
+		self.wheel_rotation.setRotationAt(0, self.wheel_angle)
+		self.wheel_rotation.setRotationAt(1, 
+			self.wheel_angle + self.wheel_angularVelocity * 360 * self.wheel_timeunit)
+		self.wheel_angle += self.wheel_angularVelocity * 360 * self.wheel_timeunit
+		if self.wheel_angle >= 360:
+			self.wheel_angle -= 360
+		self.wheel_timer.start()
 
-	def setAngularVelocity(self, angularVelocity):
+	def wheel_setAngularVelocity(self, angularVelocity):
 		"""
 		Set the speed of the rotation in revolutions per second
 		"""
 		
-		self.angularVelocity = angularVelocity
-		self.updateCalculations()
-
-	def switchColor(self, selected):
-		"""
-		If the "invert" option is selected, switch to black on white.
-		"""
-		
-		if selected:
-			self.backgroundBrush = QBrush(Qt.white)
-			self.foregroundBrush = QBrush(Qt.black)
-		else:
-			self.backgroundBrush = QBrush(Qt.black)
-			self.foregroundBrush = QBrush(Qt.white)
-		
-		self.createSceneWheel()
+		self.wheel_angularVelocity = angularVelocity
+		self.wheel_updateCalculations()
 	
-	def setScale(self, scale):
+	def wheel_setScale(self, scale):
 		"""
 		Change the scale of the scene
 		"""
 		
-		self.scale = scale
-		self.createSceneWheel()
+		self.wheel_scale = scale
+		self.wheel_createSceneWheel()
 	
-	def setThickness(self, thickness):
+	def wheel_setThickness(self, thickness):
 		"""
 		Change the thickness of the lines
 		"""
 		
-		self.thickness = thickness
-		self.createSceneWheel()
+		self.wheel_thickness = thickness
+		self.wheel_createSceneWheel()
 	
-	def reset(self):
+	def wheel_reset(self):
 		"""
 		Reset the scene to the initial value
 		"""
@@ -199,63 +237,63 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.graphWin.close()
 		self.graphWin = GraphicsWindow(parent=self)
 		self.graphWin.show()
-		self.angle = 0
-		self.createSceneWheel()
+		self.wheel_angle = 0
+		self.wheel_createSceneWheel()
 				
-	def stopTimer(self):
+	def wheel_stopTimer(self):
 		"""
 		Stop the animation
 		"""
 		
-		self.timer.stop()
+		self.wheel_timer.stop()
 		
-	def setDistance(self, distance):
+	def wheel_setDistance(self, distance):
 		"""
 		Change the distance where the bead is located from the center of the
 		wheel
 		"""
 		
-		self.distance = distance
-		self.updateCalculations()
+		self.wheel_distance = distance
+		self.wheel_updateCalculations()
 		
-	def setDensity(self, density):
+	def wheel_setDensity(self, density):
 		"""
 		Change the density of the particle
 		"""
 		
-		self.density = density
-		self.updateCalculations()
+		self.wheel_density = density
+		self.wheel_updateCalculations()
 		
-	def setPRadius(self, radius):
+	def wheel_setPRadius(self, radius):
 		"""
 		Set the radius of the particle
 		"""
 		
-		self.pradius = radius
-		self.updateCalculations()
+		self.wheel_pradius = radius
+		self.wheel_updateCalculations()
 		
-	def setViscosity(self, viscosity):
+	def wheel_setViscosity(self, viscosity):
 		"""
 		Set the viscosity of the fluid
 		"""
 		
-		self.viscosity = viscosity
-		self.updateCalculations()
+		self.wheel_viscosity = viscosity
+		self.wheel_updateCalculations()
 		
-	def updateCalculations(self):
+	def wheel_updateCalculations(self):
 		"""
-		Update the calculated value of the linear speed.
+		Update the calculated values of the Wheel test
 		"""
 		
 		# Calculate the linear velocity. Convert rps to rad/s
-		self.angularVelocitySI = self.angularVelocity * 2 * math.pi			 # From rps to rad/s
-		self.linearVelocity = self.angularVelocitySI * self.distance		 # In um/s
+		self.angularVelocitySI = self.wheel_angularVelocity * 2 * math.pi	 # From rps to rad/s
+		self.linearVelocity = self.angularVelocitySI * self.wheel_distance	 # In um/s
 		self.linVelocityLcdNumber.display(self.linearVelocity)
 		
 		# Calculate the DEP, which, at constant velocity, will be exactly the
 		# same as the drag force. Pay attention to the units.
-		self.viscositySI = self.viscosity * 1e-3                             # From mPa s to Pa s
-		self.pradiusSI = self.pradius * 1e-6                                 # From um to m
+		self.viscositySI = self.wheel_viscosity * 1e-3                             # From mPa s to Pa s
+		self.pradiusSI = self.wheel_pradius * 1e-6                           # From um to m
 		self.linearVelocitySI = self.linearVelocity * 1e-6                   # From um/s to m/s
 		self.depSI = 6 * math.pi * self.viscositySI * self.pradiusSI * \
 			self.linearVelocitySI											 # In N
@@ -263,8 +301,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.forceLcdNumber.display(self.dep)                       		 # In pN
 		
 		# Calculate the centripetal force. Attention to the units
-		self.distanceSI = self.distance * 1e-6								 # From um to m
-		self.densitySI = self.density * 1e3                                  # From g/cm3 to Kg/m3
+		self.distanceSI = self.wheel_distance * 1e-6						 # From um to m
+		self.densitySI = self.wheel_density * 1e3                            # From g/cm3 to Kg/m3
 		self.beadVolumeSI = 4 * math.pi * self.pradiusSI**3 / 3				 # In m3
 		self.beadMassSI = self.densitySI * self.beadVolumeSI				 # In Kg
 		self.centripetalForceSI = self.beadMassSI * \
@@ -272,27 +310,34 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.centripetalForce = self.centripetalForceSI * 1e12				 # From N to pN
 		self.centripetalLcdNumber.display(self.centripetalForce)        	 # In pN
 
-	def record(self):
+	def wheel_record(self):
 		"""
 		Save the current parameters to the currently open file
 		"""
 		
-		scale = str(self.scale)
-		thickness = str(self.thickness)
-		angularVelocity = str(self.angularVelocity)		# rps
-		distance = str(self.distance)					# um
-		density = str(self.density)						# g/cm3
-		pradius = str(self.pradius)						# um
-		viscosity = str(self.viscosity)					# mPa s
-		linearVelocity = str(self.linearVelocity)		# um/s
-		dep = str(self.dep)								# pN
-		centripetalForce = str(self.centripetalForce)	# pN
+		scale = str(self.wheel_scale)
+		thickness = str(self.wheel_thickness)
+		angularVelocity = str(self.wheel_angularVelocity)	# rps
+		distance = str(self.wheel_distance)					# um
+		density = str(self.wheel_density)					# g/cm3
+		pradius = str(self.wheel_pradius)					# um
+		viscosity = str(self.wheel_viscosity)				# mPa s
+		linearVelocity = str(self.linearVelocity)			# um/s
+		dep = str(self.dep)									# pN
+		centripetalForce = str(self.centripetalForce)		# pN
 		
 		recordLine = '\t'.join([scale, thickness, angularVelocity, distance,
 			density, pradius, viscosity, linearVelocity, dep,
 			centripetalForce])
 		self.file.write(recordLine + '\n')
 		self.file.flush()
+	
+	def Test2(self):
+		"""
+		This is a placeholder for a future second test added to the program
+		"""
+		
+		pass
 		
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
