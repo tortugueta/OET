@@ -1,11 +1,5 @@
-#FIXME: Every time I execute createSceneWheel the drawing is resetted. This is
-#	acceptable when I actually want to reset the scene, but when I change the
-#	scale or invert the colors I don't want that. THIS STILL DOESN' WORK
-#	PROPERLY. 
 #FIXME: Jitter of the angle whenever I change any property of the wheel.
-#FIXME: The File -> Quit menu action does not work in Windows
-#FIXME: In Windows the records are written to file when I close the program. I
-#	should add a function to immediately flush the data to file.
+#FIXME: The File -> Quit menu action does not work in Windows and I don't see why
 
 import sys
 import math

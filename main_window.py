@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Jun 15 11:05:15 2015
+# Created: Mon Jun 15 11:44:13 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -397,5 +397,7 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuColor.setTitle(_translate("MainWindow", "Color", None))
         self.actionQuit.setText(_translate("MainWindow", "Quit", None))
+        self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q", None))
         self.actionInvert.setText(_translate("MainWindow", "Invert", None))
+        self.actionInvert.setShortcut(_translate("MainWindow", "Alt+I", None))
 

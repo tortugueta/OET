@@ -860,6 +860,9 @@
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionInvert">
    <property name="checkable">
@@ -867,6 +870,9 @@
    </property>
    <property name="text">
     <string>Invert</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
    </property>
   </action>
  </widget>
