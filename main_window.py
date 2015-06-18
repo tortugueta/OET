@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Wed Jun 17 12:03:23 2015
+# Created: Thu Jun 18 10:12:05 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(323, 599)
+        MainWindow.resize(333, 599)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -99,15 +99,15 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.verticalLayout_4)
         self.verticalLayout_6 = QtGui.QVBoxLayout()
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
-        self.pRadiusLabel = QtGui.QLabel(self.wheelTab)
-        self.pRadiusLabel.setObjectName(_fromUtf8("pRadiusLabel"))
-        self.verticalLayout_6.addWidget(self.pRadiusLabel)
-        self.pradiusSpinBox = QtGui.QDoubleSpinBox(self.wheelTab)
-        self.pradiusSpinBox.setDecimals(1)
-        self.pradiusSpinBox.setMaximum(1000.0)
-        self.pradiusSpinBox.setProperty("value", 10.0)
-        self.pradiusSpinBox.setObjectName(_fromUtf8("pradiusSpinBox"))
-        self.verticalLayout_6.addWidget(self.pradiusSpinBox)
+        self.diameterLabel = QtGui.QLabel(self.wheelTab)
+        self.diameterLabel.setObjectName(_fromUtf8("diameterLabel"))
+        self.verticalLayout_6.addWidget(self.diameterLabel)
+        self.diameterSpinBox = QtGui.QDoubleSpinBox(self.wheelTab)
+        self.diameterSpinBox.setDecimals(1)
+        self.diameterSpinBox.setMaximum(1000.0)
+        self.diameterSpinBox.setProperty("value", 10.0)
+        self.diameterSpinBox.setObjectName(_fromUtf8("diameterSpinBox"))
+        self.verticalLayout_6.addWidget(self.diameterSpinBox)
         self.verticalLayout.addLayout(self.verticalLayout_6)
         self.verticalLayout_10 = QtGui.QVBoxLayout()
         self.verticalLayout_10.setObjectName(_fromUtf8("verticalLayout_10"))
@@ -348,7 +348,7 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.tabWidget, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 323, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 333, 27))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -374,7 +374,7 @@ class Ui_MainWindow(object):
         self.thicknessLabel.setBuddy(self.thicknessSpinBox)
         self.speedLabel.setBuddy(self.speedSpinBox)
         self.distanceLabel.setBuddy(self.distanceSpinBox)
-        self.pRadiusLabel.setBuddy(self.pradiusSpinBox)
+        self.diameterLabel.setBuddy(self.diameterSpinBox)
         self.densityLabel.setBuddy(self.densitySpinBox)
         self.viscositylabel.setBuddy(self.viscositySpinBox)
 
@@ -385,8 +385,8 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.scaleSpinBox, self.thicknessSpinBox)
         MainWindow.setTabOrder(self.thicknessSpinBox, self.speedSpinBox)
         MainWindow.setTabOrder(self.speedSpinBox, self.distanceSpinBox)
-        MainWindow.setTabOrder(self.distanceSpinBox, self.pradiusSpinBox)
-        MainWindow.setTabOrder(self.pradiusSpinBox, self.densitySpinBox)
+        MainWindow.setTabOrder(self.distanceSpinBox, self.diameterSpinBox)
+        MainWindow.setTabOrder(self.diameterSpinBox, self.densitySpinBox)
         MainWindow.setTabOrder(self.densitySpinBox, self.viscositySpinBox)
         MainWindow.setTabOrder(self.viscositySpinBox, self.wheelEngagePushButton)
         MainWindow.setTabOrder(self.wheelEngagePushButton, self.wheelStopPushButton)
@@ -402,8 +402,8 @@ class Ui_MainWindow(object):
         self.speedSpinBox.setToolTip(_translate("MainWindow", "Angular velocity in revolutions per second", None))
         self.distanceLabel.setText(_translate("MainWindow", "&Distance (um)", None))
         self.distanceSpinBox.setToolTip(_translate("MainWindow", "The distance from the center of the wheel to the center of the bead", None))
-        self.pRadiusLabel.setText(_translate("MainWindow", "Bead radi&us (um)", None))
-        self.pradiusSpinBox.setToolTip(_translate("MainWindow", "Radius of the bead in microns", None))
+        self.diameterLabel.setText(_translate("MainWindow", "Bead d&iameter (um)", None))
+        self.diameterSpinBox.setToolTip(_translate("MainWindow", "Radius of the bead in microns", None))
         self.densityLabel.setText(_translate("MainWindow", "Bead de&nsity (g/cm3)", None))
         self.densitySpinBox.setToolTip(_translate("MainWindow", "The density of the bead in g/cm3", None))
         self.viscositylabel.setText(_translate("MainWindow", "Dynamic &viscosity (mPa s)", None))

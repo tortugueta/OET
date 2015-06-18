@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
+    <width>333</width>
     <height>599</height>
    </rect>
   </property>
@@ -171,17 +171,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QLabel" name="pRadiusLabel">
+               <widget class="QLabel" name="diameterLabel">
                 <property name="text">
-                 <string>Bead radi&amp;us (um)</string>
+                 <string>Bead d&amp;iameter (um)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>pradiusSpinBox</cstring>
+                 <cstring>diameterSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="pradiusSpinBox">
+               <widget class="QDoubleSpinBox" name="diameterSpinBox">
                 <property name="toolTip">
                  <string>Radius of the bead in microns</string>
                 </property>
@@ -870,7 +870,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>323</width>
+     <width>333</width>
      <height>27</height>
     </rect>
    </property>
@@ -921,7 +921,7 @@
   <tabstop>thicknessSpinBox</tabstop>
   <tabstop>speedSpinBox</tabstop>
   <tabstop>distanceSpinBox</tabstop>
-  <tabstop>pradiusSpinBox</tabstop>
+  <tabstop>diameterSpinBox</tabstop>
   <tabstop>densitySpinBox</tabstop>
   <tabstop>viscositySpinBox</tabstop>
   <tabstop>wheelEngagePushButton</tabstop>
@@ -941,7 +941,7 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>399</x>
+     <x>332</x>
      <y>299</y>
     </hint>
    </hints>

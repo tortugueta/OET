@@ -45,7 +45,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.speedSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
 		self.connect(self.distanceSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
 		self.connect(self.densitySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.pradiusSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.diameterSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
 		self.connect(self.viscositySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
 		self.connect(self.wheelRecordPushButton, SIGNAL("clicked()"), self.wheelScene_saveData)
 		
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# DEP, which, at constant velocity, will be exactly the same as the
 		# drag force
 		viscosity_SI = self.viscositySpinBox.value() * 1e-3					# Pa s
-		pradius_SI = self.pradiusSpinBox.value() * 1e-6						# m
+		pradius_SI = (self.diameterSpinBox.value() / 2) * 1e-6				# m
 		linearV_SI = linearV * 1e-6											# m/s
 		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N											 # In N
 		dep = dep_SI * 1e12													# pN
@@ -228,12 +228,12 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			angularVelocityHead = 'AngularVelocity (rps)'
 			distanceHead = 'Distance (um)'
 			densityHead = 'Density (g/cm3)'
-			pradiusHead = 'Particle radius (um)'
+			diameterHead = 'Particle diameter (um)'
 			viscosityHead = 'Viscosity (mPa s)'
 			linearVelocityHead = 'Linear velocity (um/s)'
 			depHead = 'DEP (pN)'
 			centripetalForceHead = 'Centripetal force (pN)'
-			header = '\t'.join(['# ' + scaleHead, thicknessHead, angularVelocityHead, distanceHead, densityHead, pradiusHead, viscosityHead, linearVelocityHead, depHead, centripetalForceHead])
+			header = '\t'.join(['# ' + scaleHead, thicknessHead, angularVelocityHead, distanceHead, densityHead, diameterHead, viscosityHead, linearVelocityHead, depHead, centripetalForceHead])
 			file.write('# The Wheel test\n')
 			file.write(header + '\n\n')
 		
@@ -243,12 +243,12 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		angularVelocity = str(self.speedSpinBox.value())			# rps
 		distance = str(self.distanceSpinBox.value())				# um
 		density = str(self.densitySpinBox.value())					# g/cm3
-		pradius = str(self.pradiusSpinBox.value())					# um
+		diameter = str(self.diameterSpinBox.value())				# um
 		viscosity = str(self.viscositySpinBox.value())				# mPa s
 		linearVelocity = str(self.linVelocityLcdNumber.value())		# um/s
 		dep = str(self.forceLcdNumber.value())						# pN
 		centripetalForce = str(self.centripetalLcdNumber.value())	# pN
-		recordLine = '\t'.join([scale, thickness, angularVelocity, distance, density, pradius, viscosity, linearVelocity, dep, centripetalForce])
+		recordLine = '\t'.join([scale, thickness, angularVelocity, distance, density, diameter, viscosity, linearVelocity, dep, centripetalForce])
 		file.write(recordLine + '\n')
 			
 		file.close()
