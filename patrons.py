@@ -66,15 +66,15 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.actionInvert.setChecked(False)
 		
 		# Create all the scenes
-		self.wheelScene_scene, self.wheelScene_Items = self.createScene_Wheel()
-		self.tab2Scene_scene, self.tab2Scene_Items = self.createScene_Tab2()
+		self.wheelScene = self.createScene_Wheel()
+		self.tab2Scene = self.createScene_Tab2()
 		
 		# Visualize the scene corresponding to the current tab
 		if self.tabWidget.currentIndex() == 0:
-			self.graphWin.graphicsView.setScene(self.wheelScene_scene)
+			self.graphWin.graphicsView.setScene(self.wheelScene)
 		elif self.tabWidget.currentIndex() == 1:
-			self.graphWin.graphicsView.setScene(self.tab2Scene_scene)
-		
+			self.graphWin.graphicsView.setScene(self.tab2Scene)
+
 	def createScene_Wheel(self):
 		"""
 		Creates the scene of the wheel
@@ -98,6 +98,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		wheel.addToGroup(circle)
 		wheel.addToGroup(vline)
 		wheel.addToGroup(hline)
+		wheel.setFlags(QGraphicsItem.GraphicsItemFlags(1))
 		
 		# Add the items to the scene
 		scene.addItem(wheel)
@@ -106,7 +107,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# of the wheel
 		self.wheelAngle = 0.0
 		
-		return (scene, [wheel, circle, vline, hline])
+		return scene
 		
 	def createScene_Tab2(self):
 		"""
@@ -123,17 +124,18 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		pen = QPen(Qt.white, strokeWidth)
 		
 		# Create the items
-		x = 0
-		y = 0
+		x = 300
+		y = 300
 		width = 100
 		height = 50
 		rectangle = QGraphicsRectItem(x, y, width, height)
 		rectangle.setPen(pen)
+		rectangle.setFlags(QGraphicsItem.GraphicsItemFlags(1))
 		
 		# Add the items to the scene
 		scene.addItem(rectangle)
 		
-		return (scene, [rectangle])
+		return scene
 			
 	def wheelScene_updateProperties(self):
 		"""
@@ -151,7 +153,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		for item in self.wheelScene_Items[1:]:
 			item.setPen(pen)
 		
-		self.wheelScene_Items[0].setScale(scale)
+		self.wheelScene.items()[3].setScale(scale)
 	
 	def wheelScene_startRotation(self):
 		"""
@@ -178,7 +180,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		self.rotation.setRotationAt(0, initial)
 		self.rotation.setRotationAt(1, final)
-		self.rotation.setItem(self.wheelScene_Items[0])
+		self.rotation.setItem(self.wheelScene.items()[3])
 		timeline.start()
 	
 	def wheelScene_updateParameters(self):
@@ -197,7 +199,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		viscosity_SI = self.viscositySpinBox.value() * 1e-3					# Pa s
 		pradius_SI = (self.diameterSpinBox.value() / 2) * 1e-6				# m
 		linearV_SI = linearV * 1e-6											# m/s
-		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N											 # In N
+		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N
 		dep = dep_SI * 1e12													# pN
 		self.forceLcdNumber.display(dep)
 		
@@ -260,27 +262,27 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		if inverted:
 			# Modify the Wheel
-			self.wheelScene_scene.setBackgroundBrush(Qt.white)
+			self.wheelScene.setBackgroundBrush(Qt.white)
 			pen = QPen(Qt.black, self.thicknessSpinBox.value())
-			for item in self.wheelScene_Items[1:]:
+			for item in self.wheelScene.items()[0:3]:
 				item.setPen(pen)
 			
 			# Modify the second tab
-			self.tab2Scene_scene.setBackgroundBrush(Qt.white)
+			self.tab2Scene.setBackgroundBrush(Qt.white)
 			pen = QPen(Qt.black, 1)
-			for item in self.tab2Scene_Items:
+			for item in self.tab2Scene.items():
 				item.setPen(pen)
 		else:
 			# Modify the Wheel
-			self.wheelScene_scene.setBackgroundBrush(Qt.black)
+			self.wheelScene.setBackgroundBrush(Qt.black)
 			pen = QPen(Qt.white, self.thicknessSpinBox.value())
-			for item in self.wheelScene_Items[1:]:
+			for item in self.wheelScene.items()[0:3]:
 				item.setPen(pen)
 			
 			# Modify the second tab
-			self.tab2Scene_scene.setBackgroundBrush(Qt.black)
-			pen = QPen(Qt.white, 10)
-			for item in self.tab2Scene_Items:
+			self.tab2Scene.setBackgroundBrush(Qt.black)
+			pen = QPen(Qt.white, 1)
+			for item in self.tab2Scene.items():
 				item.setPen(pen)
 	
 	def switchTab(self, tabindex):
@@ -289,10 +291,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		"""
 		
 		if tabindex == 0:		
-			self.graphWin.graphicsView.setScene(self.wheelScene_scene)
+			self.graphWin.graphicsView.setScene(self.wheelScene)
 		elif tabindex == 1:
-			self.graphWin.graphicsView.setScene(self.tab2Scene_scene)
-
+			self.graphWin.graphicsView.setScene(self.tab2Scene)
+			
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 	"""
