@@ -15,14 +15,30 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QGraphicsView" name="graphicsView">
+    <widget class="ViewPort" name="graphicsView">
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="transformationAnchor">
+      <enum>QGraphicsView::AnchorViewCenter</enum>
+     </property>
+     <property name="viewportUpdateMode">
+      <enum>QGraphicsView::MinimalViewportUpdate</enum>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ViewPort</class>
+   <extends>QGraphicsView</extends>
+   <header>viewport</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

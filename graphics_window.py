@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'graphics_window.ui'
 #
-# Created: Thu Jun 11 11:37:28 2015
+# Created: Wed Jul  1 15:22:44 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,8 +29,11 @@ class Ui_GraphicsWindow(object):
         GraphicsWindow.resize(877, 649)
         self.gridLayout = QtGui.QGridLayout(GraphicsWindow)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.graphicsView = QtGui.QGraphicsView(GraphicsWindow)
+        self.graphicsView = ViewPort(GraphicsWindow)
         self.graphicsView.setFrameShadow(QtGui.QFrame.Plain)
+        self.graphicsView.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.graphicsView.setTransformationAnchor(QtGui.QGraphicsView.AnchorViewCenter)
+        self.graphicsView.setViewportUpdateMode(QtGui.QGraphicsView.MinimalViewportUpdate)
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
         self.gridLayout.addWidget(self.graphicsView, 0, 0, 1, 1)
 
@@ -40,3 +43,4 @@ class Ui_GraphicsWindow(object):
     def retranslateUi(self, GraphicsWindow):
         GraphicsWindow.setWindowTitle(_translate("GraphicsWindow", "Animation", None))
 
+from viewport import ViewPort
