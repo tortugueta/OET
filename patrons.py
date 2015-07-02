@@ -1,10 +1,11 @@
 #! /usr/bin/python
-# TODO: In tab2: first click shoud draw the trap, second click should move it
-#	to the clicked location.
-# FIXME: The movement does not work as expected. It looks like the position in
-#	the frame 1 is interpreted with respect to the initial position. What I have
-#	to input there is the difference between the end point and the initial point.
-#	I SHOULD REALLY HAVE A LOOK AT HOW THE COORDINATES WORK BECAUSE THIS IS A FUCKING MESS
+# FIXME: drag stopped working in the wheel tab
+# FIXME: for some reason the wheel does not appeart perfectly centered
+# TODO: polish and add features to the second tab:
+#	- Control size and thickness of the circles
+#	- Change the name to something cooler than "Tab2"
+#	- Control the movement speed. Start with something simple such as
+#	  just controlling the time it takes for the animation to finish
 
 import sys
 import os
@@ -103,6 +104,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		wheel.addToGroup(vline)
 		wheel.addToGroup(hline)
 		wheel.setFlags(QGraphicsItem.GraphicsItemFlags(1))
+		wheel.setPos(QPointF(0, 0))
 		
 		# Add the items to the scene
 		scene.addItem(wheel)

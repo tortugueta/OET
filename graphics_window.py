@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'graphics_window.ui'
 #
-# Created: Wed Jul  1 15:22:44 2015
+# Created: Thu Jul  2 11:39:24 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,7 +31,7 @@ class Ui_GraphicsWindow(object):
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.graphicsView = ViewPort(GraphicsWindow)
         self.graphicsView.setFrameShadow(QtGui.QFrame.Plain)
-        self.graphicsView.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.graphicsView.setAlignment(QtCore.Qt.AlignCenter)
         self.graphicsView.setTransformationAnchor(QtGui.QGraphicsView.AnchorViewCenter)
         self.graphicsView.setViewportUpdateMode(QtGui.QGraphicsView.MinimalViewportUpdate)
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))

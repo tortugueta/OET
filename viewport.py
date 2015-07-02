@@ -10,7 +10,7 @@ class ViewPort(QGraphicsView):
 	def __init__(self, parent=None):
 		QGraphicsView.__init__(self, parent)
 		
-		self.ensureVisible(0, 0, 859, 631)
+		self.setSceneRect(-self.width()/2, -self.height()/2, self.width()/2, self.height()/2)
 		self.clicked = False
 	
 	def mousePressEvent(self, event):
@@ -21,11 +21,11 @@ class ViewPort(QGraphicsView):
 		# Check to which tab the current scene corresponds, and act accordingly
 		currentTab = self.parent().parent().tabWidget.currentIndex()
 		if currentTab == 0:
-			self.mousePressEvent_wheel()
+			self.mousePressEvent_wheel(event)
 		elif currentTab == 1:
 			self.mousePressEvent_tab2(event)
 
-	def mousePressEvent_wheel(self):
+	def mousePressEvent_wheel(self, event):
 		"""
 		What to do when we click in the scene of The Wheel
 		"""
