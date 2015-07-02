@@ -30,7 +30,7 @@ class ViewPort(QGraphicsView):
 		What to do when we click in the scene of The Wheel
 		"""
 		
-		pass
+		QGraphicsView.mousePressEvent(self, event)
 
 	def mousePressEvent_tab2(self, event):
 		"""
