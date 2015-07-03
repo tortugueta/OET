@@ -1,5 +1,13 @@
 #! /usr/bin/python
-# FIXME: for some reason the wheel does not appeart perfectly centered
+# FIXME: for some reason the wheel does not appear perfectly centered
+# FIXME: The scene creation, animations and stuff, should probably be coded in
+#	the GraphicsWindow class, not in the MainWindow
+# FIXME: When I create the corners in tab2 and also when I resize them, I need
+#	to add some weird offset to make them align to the edge of the scene. I
+#	should find out why I need those offsets.
+# TODO: In tab2, add alignment marks in the corners of the scene. They should
+#	stay in the corners when I change the size of the viewport
+# TODO: In tab2, add a function that maps a region of the screen to the viewport
 
 import sys
 import os
@@ -97,7 +105,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		wheel.addToGroup(circle)
 		wheel.addToGroup(vline)
 		wheel.addToGroup(hline)
-		wheel.setFlags(QGraphicsItem.GraphicsItemFlags(1))
+		wheel.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make the item movable
 		wheel.setPos(QPointF(0, 0))
 		
 		# Add the items to the scene
@@ -119,16 +127,56 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		scene = QGraphicsScene(parent=self)
 		
-		# Set the color of the background
+		# Set the color of the background and pens
 		scene.setBackgroundBrush(Qt.black)
+		thickness = 10
+		pen = QPen(Qt.white, thickness)
 		
-		# Create a small rectangle in (0, 0) to anchor the view
-		rectangle = QGraphicsRectItem(QRectF(0, 0, 0, 0))
-		rectangle.setPos(0, 0)
-		pen = QPen(Qt.white, 1)
-		rectangle.setPen(pen)
-		scene.addItem(rectangle)
+		# Create the alignment marks
+		height = self.graphWin.graphicsView.height()
+		width = self.graphWin.graphicsView.width()
+		fraction = 10
 		
+		tlcorner_vline = QGraphicsLineItem(0, 0, 0, height/fraction)
+		tlcorner_vline.setPen(pen)
+		tlcorner_hline = QGraphicsLineItem(0, 0, width/fraction, 0)
+		tlcorner_hline.setPen(pen)
+		tlcorner = QGraphicsItemGroup()
+		tlcorner.addToGroup(tlcorner_vline)
+		tlcorner.addToGroup(tlcorner_hline)
+		tlcorner.setPos(self.graphWin.graphicsView.mapToScene(0, 0))
+		scene.addItem(tlcorner)
+		
+		blcorner_vline = QGraphicsLineItem(0, 0, 0, -height/fraction)
+		blcorner_vline.setPen(pen)
+		blcorner_hline = QGraphicsLineItem(0, 0, width/fraction, 0)
+		blcorner_hline.setPen(pen)
+		blcorner = QGraphicsItemGroup()
+		blcorner.addToGroup(blcorner_vline)
+		blcorner.addToGroup(blcorner_hline)
+		blcorner.setPos(self.graphWin.graphicsView.mapToScene(0, height-3)) # For some reason there is a 3 pixel offset
+		scene.addItem(blcorner)
+		
+		trcorner_vline = QGraphicsLineItem(0, 0, 0, height/fraction)
+		trcorner_vline.setPen(pen)
+		trcorner_hline = QGraphicsLineItem(0, 0, -width/10, 0)
+		trcorner_hline.setPen(pen)
+		trcorner = QGraphicsItemGroup()
+		trcorner.addToGroup(trcorner_vline)
+		trcorner.addToGroup(trcorner_hline)
+		trcorner.setPos(self.graphWin.graphicsView.mapToScene(width-3, 0)) # For some reason there is a 3 pixel offset
+		scene.addItem(trcorner)
+		
+		brcorner_vline = QGraphicsLineItem(0, 0, 0, -height/fraction)
+		brcorner_vline.setPen(pen)
+		brcorner_hline = QGraphicsLineItem(0, 0, -width/fraction, 0)
+		brcorner_hline.setPen(pen)
+		brcorner = QGraphicsItemGroup()
+		brcorner.addToGroup(brcorner_vline)
+		brcorner.addToGroup(brcorner_hline)
+		brcorner.setPos(self.graphWin.graphicsView.mapToScene(width-3, height-3)) # For some reason there is a 3 pixel offset
+		scene.addItem(brcorner)
+
 		return scene
 			
 	def wheelScene_updateProperties(self):
@@ -257,31 +305,43 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		if inverted:
 			# Modify the Wheel
 			self.wheelScene.setBackgroundBrush(Qt.white)
-			for item in self.wheelScene.items()[0:3]:
-				pen = item.pen()
-				pen.setBrush(Qt.black)
-				item.setPen(pen)
+			for item in self.wheelScene.items():
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.black)
+					item.setPen(pen)
+				except AttributeError:
+					pass
 			
 			# Modify the second tab
 			self.tab2Scene.setBackgroundBrush(Qt.white)
 			for item in self.tab2Scene.items():
-				pen = item.pen()
-				pen.setBrush(Qt.black)
-				item.setPen(pen)
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.black)
+					item.setPen(pen)
+				except AttributeError:
+					pass
 		else:
 			# Modify the Wheel
 			self.wheelScene.setBackgroundBrush(Qt.black)
-			for item in self.wheelScene.items()[0:3]:
-				pen = item.pen()
-				pen.setBrush(Qt.white)
-				item.setPen(pen)
+			for item in self.wheelScene.items():
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.white)
+					item.setPen(pen)
+				except AttributeError:
+					pass
 			
 			# Modify the second tab
 			self.tab2Scene.setBackgroundBrush(Qt.black)
 			for item in self.tab2Scene.items():
-				pen = item.pen()
-				pen.setBrush(Qt.white)
-				item.setPen(pen)
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.white)
+					item.setPen(pen)
+				except AttributeError:
+					pass
 	
 	def switchTab(self, tabindex):
 		"""
@@ -306,6 +366,45 @@ class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 		# Build the main window using the setupUi method generated by Qt
 		# Designer
 		self.setupUi(self)
+	
+	def resizeEvent(self, event):
+		"""
+		What to do when we resize the window
+		"""
+		
+		# Check to which tab the current scene corresponds, and act accordingly
+		currentTab = self.parent().tabWidget.currentIndex()
+		if currentTab == 0:
+			self.resizeEvent_wheel(event)
+		elif currentTab == 1:
+			self.resizeEvent_tab2(event)
+	
+	def resizeEvent_wheel(self, event):
+		"""
+		What to do in the Wheel scene when we resize the window
+		"""
+		
+		QDialog.resizeEvent(self, event)
+		
+	def resizeEvent_tab2(self, event):
+		"""
+		What to do in the tab2 scene when we resize the window
+		"""
+		
+		QDialog.resizeEvent(self, event)
+		newWidth = event.size().width()
+		newHeight = event.size().height()
+		
+		tlcorner = self.graphicsView.scene().items()[-1]
+		blcorner = self.graphicsView.scene().items()[-4]
+		trcorner = self.graphicsView.scene().items()[-7]
+		brcorner = self.graphicsView.scene().items()[-10]
+		
+		tlcorner.setPos(self.graphicsView.mapToScene(0, 0))
+		blcorner.setPos(self.graphicsView.mapToScene(0, newHeight-25)) # For some reason I need the 25 pixel offset
+		trcorner.setPos(self.graphicsView.mapToScene(newWidth-25, 0)) # For some reason I need the 25 pixel offset
+		brcorner.setPos(self.graphicsView.mapToScene(newWidth-25, newHeight-25)) # For some reason I need the 25 pixel offset
+			
 
 
 def main():
