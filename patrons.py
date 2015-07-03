@@ -1,11 +1,5 @@
 #! /usr/bin/python
-# FIXME: drag stopped working in the wheel tab
 # FIXME: for some reason the wheel does not appeart perfectly centered
-# TODO: polish and add features to the second tab:
-#	- Control size and thickness of the circles
-#	- Change the name to something cooler than "Tab2"
-#	- Control the movement speed. Start with something simple such as
-#	  just controlling the time it takes for the animation to finish
 
 import sys
 import os
@@ -43,15 +37,15 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.actionInvert, SIGNAL("toggled(bool)"), self.updateColors)
 		
 		# Connections for the Wheel tab
-		self.connect(self.scaleSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
-		self.connect(self.thicknessSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
-		self.connect(self.wheelEngagePushButton, SIGNAL("clicked()"), self.wheelScene_startRotation)
-		self.connect(self.speedSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.distanceSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.densitySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.diameterSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.viscositySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
-		self.connect(self.wheelRecordPushButton, SIGNAL("clicked()"), self.wheelScene_saveData)
+		self.connect(self.tab1_scaleSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
+		self.connect(self.tab1_thicknessSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
+		self.connect(self.tab1_engagePushButton, SIGNAL("clicked()"), self.wheelScene_startRotation)
+		self.connect(self.tab1_speedSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.tab1_distanceSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.tab1_densitySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.tab1_diameterSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.tab1_viscositySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
+		self.connect(self.tab1_recordPushButton, SIGNAL("clicked()"), self.wheelScene_saveData)
 		
 		# Connections for the Tab2 tab
 		
@@ -88,7 +82,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# Create the scene and set some basic properties
 		scene = QGraphicsScene(parent=self)
 		scene.setBackgroundBrush(Qt.black)
-		thickness = self.thicknessSpinBox.value()
+		thickness = self.tab1_thicknessSpinBox.value()
 		pixelRadius = 100
 		pen = QPen(Qt.white, thickness)
 		
@@ -112,6 +106,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# Create a running variable that will be used to determine the rotation angle
 		# of the wheel
 		self.wheelAngle = 0.0
+		
+		# Make the calculations with the initial values
+		self.wheelScene_updateParameters()
 		
 		return scene
 		
@@ -139,8 +136,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		Update the properties of the scene
 		"""
 		
-		thickness = self.thicknessSpinBox.value()
-		scale = self.scaleSpinBox.value()
+		thickness = self.tab1_thicknessSpinBox.value()
+		scale = self.tab1_scaleSpinBox.value()
 		
 		if self.actionInvert.isChecked():
 			pen = QPen(Qt.black, thickness)
@@ -166,9 +163,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.rotation.setTimeLine(timeline)
 		
 		self.connect(timeline, SIGNAL("finished()"), self.wheelScene_startRotation)
-		self.connect(self.wheelStopPushButton, SIGNAL("clicked()"), timeline.stop)
+		self.connect(self.tab1_stopPushButton, SIGNAL("clicked()"), timeline.stop)
 		
-		angularV = self.speedSpinBox.value()
+		angularV = self.tab1_speedSpinBox.value()
 		initial = self.wheelAngle
 		if initial > 360:
 			initial -= 360
@@ -187,27 +184,27 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		"""
 		
 		# Linear velocity
-		angularV_SI = self.speedSpinBox.value() * 2 * math.pi				# rad/s
-		linearV = angularV_SI * self.distanceSpinBox.value()				# In um/s
-		self.linVelocityLcdNumber.display(linearV)
+		angularV_SI = self.tab1_speedSpinBox.value() * 2 * math.pi				# rad/s
+		linearV = angularV_SI * self.tab1_distanceSpinBox.value()				# In um/s
+		self.tab1_linVelocityLcdNumber.display(linearV)
 		
 		# DEP, which, at constant velocity, will be exactly the same as the
 		# drag force
-		viscosity_SI = self.viscositySpinBox.value() * 1e-3					# Pa s
-		pradius_SI = (self.diameterSpinBox.value() / 2) * 1e-6				# m
+		viscosity_SI = self.tab1_viscositySpinBox.value() * 1e-3					# Pa s
+		pradius_SI = (self.tab1_diameterSpinBox.value() / 2) * 1e-6				# m
 		linearV_SI = linearV * 1e-6											# m/s
 		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N
 		dep = dep_SI * 1e12													# pN
-		self.forceLcdNumber.display(dep)
+		self.tab1_forceLcdNumber.display(dep)
 		
 		# Centripetal force
-		distance_SI = self.distanceSpinBox.value() * 1e-6					# m
-		density_SI = self.densitySpinBox.value() * 1e3						# Kg/m3
+		distance_SI = self.tab1_distanceSpinBox.value() * 1e-6					# m
+		density_SI = self.tab1_densitySpinBox.value() * 1e3						# Kg/m3
 		beadVolume_SI = 4 * math.pi * pradius_SI**3 / 3						# m3
 		beadMass_SI = density_SI * beadVolume_SI							# Kg
 		centripetal_SI = beadMass_SI * angularV_SI**2 * distance_SI			# In N
 		centripetal = centripetal_SI * 1e12									# pN
-		self.centripetalLcdNumber.display(centripetal)
+		self.tab1_centripetalLcdNumber.display(centripetal)
 
 	def wheelScene_saveData(self):
 		"""
@@ -237,16 +234,16 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			file.write(header + '\n\n')
 		
 		# Write the values
-		scale = str(self.scaleSpinBox.value())
-		thickness = str(self.thicknessSpinBox.value())
-		angularVelocity = str(self.speedSpinBox.value())			# rps
-		distance = str(self.distanceSpinBox.value())				# um
-		density = str(self.densitySpinBox.value())					# g/cm3
-		diameter = str(self.diameterSpinBox.value())				# um
-		viscosity = str(self.viscositySpinBox.value())				# mPa s
-		linearVelocity = str(self.linVelocityLcdNumber.value())		# um/s
-		dep = str(self.forceLcdNumber.value())						# pN
-		centripetalForce = str(self.centripetalLcdNumber.value())	# pN
+		scale = str(self.tab1_scaleSpinBox.value())
+		thickness = str(self.tab1_thicknessSpinBox.value())
+		angularVelocity = str(self.tab1_speedSpinBox.value())			# rps
+		distance = str(self.tab1_distanceSpinBox.value())				# um
+		density = str(self.tab1_densitySpinBox.value())					# g/cm3
+		diameter = str(self.tab1_diameterSpinBox.value())				# um
+		viscosity = str(self.tab1_viscositySpinBox.value())				# mPa s
+		linearVelocity = str(self.tab1_linVelocityLcdNumber.value())		# um/s
+		dep = str(self.tab1_forceLcdNumber.value())						# pN
+		centripetalForce = str(self.tab1_centripetalLcdNumber.value())	# pN
 		recordLine = '\t'.join([scale, thickness, angularVelocity, distance, density, diameter, viscosity, linearVelocity, dep, centripetalForce])
 		file.write(recordLine + '\n')
 			

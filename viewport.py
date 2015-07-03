@@ -39,19 +39,21 @@ class ViewPort(QGraphicsView):
 		
 		currentScene = self.scene()
 		sceneCoordinates = self.mapToScene(event.pos())
-		radius = 40
 
+		# Click to create trap
 		if not self.clicked:
-			strokeWidth = 15
+			self.size = self.parent().parent().tab2_sizeSpinBox.value()
+			strokeWidth = self.parent().parent().tab2_thicknessSpinBox.value()
 			pen = QPen(Qt.white, strokeWidth)
-			circle = QGraphicsEllipseItem(0, 0, radius * 2, radius * 2)
-			circle.setPos(sceneCoordinates.x() - radius, sceneCoordinates.y() - radius)
+			circle = QGraphicsEllipseItem(0, 0, self.size, self.size)
+			circle.setPos(sceneCoordinates.x() - self.size/2, sceneCoordinates.y() - self.size/2)
 			circle.setPen(pen)
 			currentScene.addItem(circle)
 			self.centerOn(0, 0)
 			self.clicked = True
+		# Click to move trap
 		else:
-			duration = 1 # seconds
+			duration = self.parent().parent().tab2_travelTimeSpinBox.value() # seconds
 			timeline = QTimeLine(duration * 1000)
 			timeline.setFrameRange(0, 1)
 			timeline.setUpdateInterval(1)
@@ -60,8 +62,8 @@ class ViewPort(QGraphicsView):
 			self.movement.setTimeLine(timeline)
 			
 			self.movement.setPosAt(0, currentScene.items()[0].scenePos())
-			finalx = sceneCoordinates.x() - radius
-			finaly = sceneCoordinates.y() - radius
+			finalx = sceneCoordinates.x() - self.size/2
+			finaly = sceneCoordinates.y() - self.size/2
 			self.movement.setPosAt(1, QPointF(finalx, finaly))
 			self.movement.setItem(currentScene.items()[0])
 			timeline.start()

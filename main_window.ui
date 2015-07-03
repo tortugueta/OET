@@ -48,17 +48,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="QLabel" name="scaleLabel">
+               <widget class="QLabel" name="tab1_scaleLabel">
                 <property name="text">
                  <string>&amp;Scale</string>
                 </property>
                 <property name="buddy">
-                 <cstring>scaleSpinBox</cstring>
+                 <cstring>tab1_scaleSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="scaleSpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_scaleSpinBox">
                 <property name="toolTip">
                  <string>Scale of the figure</string>
                 </property>
@@ -81,17 +81,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QLabel" name="thicknessLabel">
+               <widget class="QLabel" name="tab1_thicknessLabel">
                 <property name="text">
                  <string>&amp;Thickness</string>
                 </property>
                 <property name="buddy">
-                 <cstring>thicknessSpinBox</cstring>
+                 <cstring>tab1_thicknessSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="thicknessSpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_thicknessSpinBox">
                 <property name="toolTip">
                  <string>Thickness of the lines</string>
                 </property>
@@ -108,17 +108,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
-               <widget class="QLabel" name="speedLabel">
+               <widget class="QLabel" name="tab1_speedLabel">
                 <property name="text">
                  <string>&amp;Angular velocity (rps)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>speedSpinBox</cstring>
+                 <cstring>tab1_speedSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="speedSpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_speedSpinBox">
                 <property name="toolTip">
                  <string>Angular velocity in revolutions per second</string>
                 </property>
@@ -141,17 +141,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QLabel" name="distanceLabel">
+               <widget class="QLabel" name="tab1_distanceLabel">
                 <property name="text">
                  <string>&amp;Distance (um)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>distanceSpinBox</cstring>
+                 <cstring>tab1_distanceSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="distanceSpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_distanceSpinBox">
                 <property name="toolTip">
                  <string>The distance from the center of the wheel to the center of the bead</string>
                 </property>
@@ -171,17 +171,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QLabel" name="diameterLabel">
+               <widget class="QLabel" name="tab1_diameterLabel">
                 <property name="text">
-                 <string>Bead d&amp;iameter (um)</string>
+                 <string>Bead dia&amp;meter (um)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>diameterSpinBox</cstring>
+                 <cstring>tab1_diameterSpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="diameterSpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_diameterSpinBox">
                 <property name="toolTip">
                  <string>Radius of the bead in microns</string>
                 </property>
@@ -201,17 +201,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QLabel" name="densityLabel">
+               <widget class="QLabel" name="tab1_densityLabel">
                 <property name="text">
                  <string>Bead de&amp;nsity (g/cm3)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>densitySpinBox</cstring>
+                 <cstring>tab1_densitySpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="densitySpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_densitySpinBox">
                 <property name="toolTip">
                  <string>The density of the bead in g/cm3</string>
                 </property>
@@ -228,17 +228,17 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
-               <widget class="QLabel" name="viscositylabel">
+               <widget class="QLabel" name="tab1_viscositylabel">
                 <property name="text">
                  <string>Dynamic &amp;viscosity (mPa s)</string>
                 </property>
                 <property name="buddy">
-                 <cstring>viscositySpinBox</cstring>
+                 <cstring>tab1_viscositySpinBox</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="viscositySpinBox">
+               <widget class="QDoubleSpinBox" name="tab1_viscositySpinBox">
                 <property name="toolTip">
                  <string>Dynamic viscosity of the solution in mPa s</string>
                 </property>
@@ -259,14 +259,14 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QLabel" name="linspeedLabel">
+               <widget class="QLabel" name="tab1_linspeedLabel">
                 <property name="text">
                  <string>Linear velocity (um/s)</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLCDNumber" name="linVelocityLcdNumber">
+               <widget class="QLCDNumber" name="tab1_linVelocityLcdNumber">
                 <property name="palette">
                  <palette>
                   <active>
@@ -434,7 +434,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QLabel" name="forcelabel">
+               <widget class="QLabel" name="tab1_forcelabel">
                 <property name="text">
                  <string>DEP (pN)</string>
                 </property>
@@ -444,7 +444,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLCDNumber" name="forceLcdNumber">
+               <widget class="QLCDNumber" name="tab1_forceLcdNumber">
                 <property name="palette">
                  <palette>
                   <active>
@@ -612,7 +612,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
-               <widget class="QLabel" name="centripetalLabel">
+               <widget class="QLabel" name="tab1_centripetalLabel">
                 <property name="text">
                  <string>Centripetal force (pN)</string>
                 </property>
@@ -622,7 +622,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLCDNumber" name="centripetalLcdNumber">
+               <widget class="QLCDNumber" name="tab1_centripetalLcdNumber">
                 <property name="palette">
                  <palette>
                   <active>
@@ -796,7 +796,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QPushButton" name="wheelEngagePushButton">
+             <widget class="QPushButton" name="tab1_engagePushButton">
               <property name="toolTip">
                <string>Start the animation</string>
               </property>
@@ -806,7 +806,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="wheelStopPushButton">
+             <widget class="QPushButton" name="tab1_stopPushButton">
               <property name="toolTip">
                <string>Stop the animation</string>
               </property>
@@ -818,7 +818,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="wheelRecordPushButton">
+           <widget class="QPushButton" name="tab1_recordPushButton">
             <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
             </property>
@@ -849,15 +849,105 @@
       </widget>
       <widget class="QWidget" name="testTab">
        <attribute name="title">
-        <string>Test 2</string>
+        <string>Select and Move</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>This is space for another test</string>
+       <layout class="QVBoxLayout" name="verticalLayout_17">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_16">
+          <item>
+           <widget class="QLabel" name="tab2_sizeLabel">
+            <property name="text">
+             <string>&amp;Size</string>
+            </property>
+            <property name="buddy">
+             <cstring>tab2_sizeSpinBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="tab2_sizeSpinBox">
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>100.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_14">
+          <item>
+           <widget class="QLabel" name="tab2_thicknessLabel">
+            <property name="text">
+             <string>&amp;Thickness</string>
+            </property>
+            <property name="buddy">
+             <cstring>tab2_thicknessSpinBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="tab2_thicknessSpinBox">
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_15">
+          <item>
+           <widget class="QLabel" name="tab2_travelTimeLabel">
+            <property name="text">
+             <string>T&amp;ravel time (s)</string>
+            </property>
+            <property name="buddy">
+             <cstring>tab2_travelTimeSpinBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="tab2_travelTimeSpinBox">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>5.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>304</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -917,16 +1007,16 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>scaleSpinBox</tabstop>
-  <tabstop>thicknessSpinBox</tabstop>
-  <tabstop>speedSpinBox</tabstop>
-  <tabstop>distanceSpinBox</tabstop>
-  <tabstop>diameterSpinBox</tabstop>
-  <tabstop>densitySpinBox</tabstop>
-  <tabstop>viscositySpinBox</tabstop>
-  <tabstop>wheelEngagePushButton</tabstop>
-  <tabstop>wheelStopPushButton</tabstop>
-  <tabstop>wheelRecordPushButton</tabstop>
+  <tabstop>tab1_scaleSpinBox</tabstop>
+  <tabstop>tab1_thicknessSpinBox</tabstop>
+  <tabstop>tab1_speedSpinBox</tabstop>
+  <tabstop>tab1_distanceSpinBox</tabstop>
+  <tabstop>tab1_diameterSpinBox</tabstop>
+  <tabstop>tab1_densitySpinBox</tabstop>
+  <tabstop>tab1_viscositySpinBox</tabstop>
+  <tabstop>tab1_engagePushButton</tabstop>
+  <tabstop>tab1_stopPushButton</tabstop>
+  <tabstop>tab1_recordPushButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
