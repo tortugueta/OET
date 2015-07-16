@@ -5,9 +5,14 @@
 # FIXME: When I create the corners in tab2 and also when I resize them, I need
 #	to add some weird offset to make them align to the edge of the scene. I
 #	should find out why I need those offsets.
-# TODO: In tab2, add alignment marks in the corners of the scene. They should
-#	stay in the corners when I change the size of the viewport
-# TODO: In tab2, add a function that maps a region of the screen to the viewport
+# FIXME: When stopping, lowering the rps, and starting again, sometimes you
+#	get a first rapid short rotation. That is because the initial angle is set
+#	to the end angle of the previous unit rotation. This is not trivial to
+#	solve because when I stop an animation mid-play, I don't know how to fetch
+#	the current angle of the figure.
+# FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
+# TODO: Add tab3 with a selection of different figures (see how to make full
+#	painted figures
 
 import sys
 import os
@@ -17,6 +22,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import main_window
 import graphics_window
+import calibrationWindow
 
 class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 	
@@ -56,6 +62,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.tab1_recordPushButton, SIGNAL("clicked()"), self.wheelScene_saveData)
 		
 		# Connections for the Tab2 tab
+		self.connect(self.tab2_opacitySpinBox, SIGNAL("valueChanged(double)"), self.calWindow.changeOpacity)
 		
 		# Grab the current date for the filename
 		now = datetime.datetime.now()
@@ -81,6 +88,12 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			self.graphWin.graphicsView.setScene(self.wheelScene)
 		elif self.tabWidget.currentIndex() == 1:
 			self.graphWin.graphicsView.setScene(self.tab2Scene)
+			try:
+				self.calWindow.close()
+			except AttributeError:
+				pass
+			self.calWindow = CalibrationWindow(self)
+			self.calWindow.show()
 
 	def createScene_Wheel(self):
 		"""
@@ -348,11 +361,21 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		What to do when the tab is changed
 		"""
 		
-		if tabindex == 0:		
+		if tabindex == 0:	
 			self.graphWin.graphicsView.setScene(self.wheelScene)
+			try:
+				self.calWindow.close()
+			except AttributeError:
+				pass
 		elif tabindex == 1:
 			self.graphWin.graphicsView.setScene(self.tab2Scene)
-			
+			try:
+				self.calWindow.close()
+			except AttributeError:
+				pass
+			self.calWindow = CalibrationWindow(self)
+			self.calWindow.show()
+
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 	"""
@@ -371,42 +394,85 @@ class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 		"""
 		What to do when we resize the window
 		"""
+
+		QDialog.resizeEvent(self, event)
+		
+		newWidth = event.size().width()
+		newHeight = event.size().height()
+		self.graphicsView.setSceneRect(-newWidth/2, -newHeight/2, newWidth/2, newHeight/2)
 		
 		# Check to which tab the current scene corresponds, and act accordingly
 		currentTab = self.parent().tabWidget.currentIndex()
 		if currentTab == 0:
 			self.resizeEvent_wheel(event)
 		elif currentTab == 1:
-			self.resizeEvent_tab2(event)
+			self.resizeEvent_tab2(event, newWidth, newHeight)
 	
 	def resizeEvent_wheel(self, event):
 		"""
 		What to do in the Wheel scene when we resize the window
 		"""
 		
-		QDialog.resizeEvent(self, event)
+		pass
 		
-	def resizeEvent_tab2(self, event):
+	def resizeEvent_tab2(self, event, newWidth, newHeight):
 		"""
 		What to do in the tab2 scene when we resize the window
 		"""
 		
-		QDialog.resizeEvent(self, event)
-		newWidth = event.size().width()
-		newHeight = event.size().height()
-		
-		tlcorner = self.graphicsView.scene().items()[-1]
-		blcorner = self.graphicsView.scene().items()[-4]
-		trcorner = self.graphicsView.scene().items()[-7]
-		brcorner = self.graphicsView.scene().items()[-10]
-		
-		tlcorner.setPos(self.graphicsView.mapToScene(0, 0))
-		blcorner.setPos(self.graphicsView.mapToScene(0, newHeight-25)) # For some reason I need the 25 pixel offset
-		trcorner.setPos(self.graphicsView.mapToScene(newWidth-25, 0)) # For some reason I need the 25 pixel offset
-		brcorner.setPos(self.graphicsView.mapToScene(newWidth-25, newHeight-25)) # For some reason I need the 25 pixel offset
+		scene = self.graphicsView.scene()
+		if scene != None:
+			tlcorner = scene.items()[-1]
+			blcorner = scene.items()[-4]
+			trcorner = scene.items()[-7]
+			brcorner = scene.items()[-10]
 			
+			tlcorner.setPos(self.graphicsView.mapToScene(0, 0))
+			blcorner.setPos(self.graphicsView.mapToScene(0, newHeight-25)) # For some reason I need the 25 pixel offset
+			trcorner.setPos(self.graphicsView.mapToScene(newWidth-25, 0)) # For some reason I need the 25 pixel offset
+			brcorner.setPos(self.graphicsView.mapToScene(newWidth-25, newHeight-25)) # For some reason I need the 25 pixel offset
 
 
+class CalibrationWindow(QDialog, calibrationWindow.Ui_calibrationWindow):
+	"""
+	This is the window that we use to calibrate the camera region
+	"""
+	
+	def __init__(self, parent=None):
+		QDialog.__init__(self, parent)
+		calibrationWindow.Ui_calibrationWindow.__init__(self, parent)
+		
+		self.setupUi(self)
+		
+	def mousePressEvent(self, event):
+		"""
+		What to do when the mouse is clicked in the calibration window
+		"""
+		
+		QDialog.mousePressEvent(self, event)
+		width = float(self.geometry().width())
+		height = float(self.geometry().height())
+		xpos = float(event.x())
+		ypos = float(event.y())
+		relativeX = xpos/width
+		relativeY = ypos/height
+		
+		viewportWidth = self.parent().graphWin.graphicsView.width()
+		viewportHeight = self.parent().graphWin.graphicsView.height()
+		extrapolatedX = relativeX * viewportWidth
+		extrapolatedY = relativeY * viewportHeight
+		newEvent = QMouseEvent(QEvent.MouseButtonPress, QPoint(extrapolatedX, extrapolatedY), Qt.LeftButton, Qt.NoButton, Qt.NoModifier)
+		
+		self.parent().graphWin.graphicsView.mousePressEvent_tab2(newEvent)
+		
+	def changeOpacity(self, opacity):
+		"""
+		Change the opacity of the calibration window
+		"""
+		
+		self.setWindowOpacity(opacity)
+		
+		
 def main():
 	app = QApplication(sys.argv)
 	mainWin = MainWindow()
