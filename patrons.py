@@ -13,7 +13,6 @@
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
 # TODO: In tab2, add a flag to add fill to the trap (to fill, create brush and
 #	set it to the item
-# TODO: Add tab3 with a selection of different figures
 
 import sys
 import os
@@ -69,6 +68,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# Connections for the Shapes tab
 		self.connect(self.tab3_shapesComboBox, SIGNAL("currentIndexChanged(int)"), self.shapesScene_update)
 		self.connect(self.tab3_thicknessSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
+		self.connect(self.tab3_scaleSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
+		self.connect(self.tab3_rotationSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		self.connect(self.tab3_filledCheckBox, SIGNAL("stateChanged(int)"), self.shapesScene_update)
 		
 		# Grab the current date for the filename
@@ -325,9 +326,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# Create the scene and set some basic properties
 		scene = QGraphicsScene(parent=self)
 		scene.setBackgroundBrush(Qt.black)
-		thickness = 1
-		pen = QPen(Qt.white, thickness)
-		
+
 		return scene
 	
 	def shapesScene_update(self):
@@ -336,14 +335,39 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		currently selected item
 		"""
 		
+		try:
+			pos = self.shapesScene.items()[0].pos()
+			self.shapesScene.removeItem(self.shapesScene.items()[0])
+		except IndexError:
+			pos = QPointF(0, 0)
+		
 		selectedShape = self.tab3_shapesComboBox.currentIndex()
 		thickness = self.tab3_thicknessSpinBox.value()
+		scale = self.tab3_scaleSpinBox.value()
+		angle = self.tab3_rotationSpinBox.value()
 		filled = self.tab3_filledCheckBox.isChecked()
+		radius = 100
+		
+		if self.actionInvert.isChecked():
+			pen = QPen(Qt.black, thickness)
+			brush = QBrush(Qt.black)
+		else:
+			pen = QPen(Qt.white, thickness)
+			brush = QBrush(Qt.white)
 		
 		if selectedShape == 0:
-			print 'Circle', thickness, filled
+			item = QGraphicsEllipseItem(-radius, -radius, radius*2, radius*2)
 		elif selectedShape == 1:
-			print 'Rectangle', thickness, filled
+			item = QGraphicsRectItem(-radius, -radius, radius*2, radius*2)
+		
+		item.setPen(pen)
+		if filled:
+			item.setBrush(brush)
+		item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
+		item.setPos(pos)
+		item.setRotation(angle)
+		self.shapesScene.addItem(item)
+		item.setScale(scale)
 
 	def updateColors(self, inverted):
 		"""
@@ -380,6 +404,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 					item.setPen(pen)
 				except AttributeError:
 					pass
+				if self.tab3_filledCheckBox.isChecked():
+					item.setBrush(Qt.black)
 		else:
 			# Modify the Wheel scene
 			self.wheelScene.setBackgroundBrush(Qt.black)
@@ -410,6 +436,8 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 					item.setPen(pen)
 				except AttributeError:
 					pass
+				if self.tab3_filledCheckBox.isChecked():
+					item.setBrush(Qt.white)
 	
 	def switchTab(self, tabindex):
 		"""
@@ -537,6 +565,7 @@ class CalibrationWindow(QDialog, calibrationWindow.Ui_calibrationWindow):
 		
 def main():
 	app = QApplication(sys.argv)
+	#app.setStyle("plastique")
 	mainWin = MainWindow()
 	mainWin.show()
 	app.exec_()

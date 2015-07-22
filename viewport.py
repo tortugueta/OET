@@ -24,6 +24,8 @@ class ViewPort(QGraphicsView):
 			self.mousePressEvent_wheel(event)
 		elif currentTab == 1:
 			self.mousePressEvent_tab2(event)
+		elif currentTab == 2:
+			self.mousePressEvent_shapes(event)
 
 	def mousePressEvent_wheel(self, event):
 		"""
@@ -68,3 +70,10 @@ class ViewPort(QGraphicsView):
 			self.movement.setItem(currentScene.items()[0])
 			timeline.start()
 			self.clicked = False
+
+	def mousePressEvent_shapes(self, event):
+		"""
+		What to do when we click in the scene of tab3
+		"""
+		
+		QGraphicsView.mousePressEvent(self, event)
