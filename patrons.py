@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# FIXME: for some reason the wheel does not appear perfectly centered
+# FIXME: for some reason the wheel does not appear centered
 # FIXME: The scene creation, animations and stuff, should probably be coded in
 #	the GraphicsWindow class, not in the MainWindow
 # FIXME: When I create the corners in tab2 and also when I resize them, I need
@@ -11,8 +11,9 @@
 #	solve because when I stop an animation mid-play, I don't know how to fetch
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
-# TODO: Add tab3 with a selection of different figures (see how to make full
-#	painted figures
+# TODO: In tab2, add a flag to add fill to the trap (to fill, create brush and
+#	set it to the item
+# TODO: Add tab3 with a selection of different figures
 
 import sys
 import os
@@ -42,6 +43,9 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.graphWin = GraphicsWindow(parent=self)
 		self.graphWin.show()
 		
+		# Populate the list of shapes in the Shapes tab
+		self.tab3_shapesComboBox.addItems(['Circle', 'Rectangle'])
+		
 		# Create the scenes for each tab
 		self.createScenes()
 		
@@ -52,6 +56,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		# Connections for the Wheel tab
 		self.connect(self.tab1_scaleSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
+		self.connect(self.tab1_innerRadiusSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
 		self.connect(self.tab1_thicknessSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateProperties)
 		self.connect(self.tab1_engagePushButton, SIGNAL("clicked()"), self.wheelScene_startRotation)
 		self.connect(self.tab1_speedSpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
@@ -61,8 +66,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.tab1_viscositySpinBox, SIGNAL("valueChanged(double)"), self.wheelScene_updateParameters)
 		self.connect(self.tab1_recordPushButton, SIGNAL("clicked()"), self.wheelScene_saveData)
 		
-		# Connections for the Tab2 tab
-		self.connect(self.tab2_opacitySpinBox, SIGNAL("valueChanged(double)"), self.calWindow.changeOpacity)
+		# Connections for the Shapes tab
+		self.connect(self.tab3_shapesComboBox, SIGNAL("currentIndexChanged(int)"), self.shapesScene_update)
+		self.connect(self.tab3_thicknessSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
+		self.connect(self.tab3_filledCheckBox, SIGNAL("stateChanged(int)"), self.shapesScene_update)
 		
 		# Grab the current date for the filename
 		now = datetime.datetime.now()
@@ -81,19 +88,13 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		# Create all the scenes
 		self.wheelScene = self.createScene_Wheel()
 		self.tab2Scene = self.createScene_Tab2()
+		self.shapesScene = self.createScene_Shapes()
+		self.shapesScene_update()
 		
 		# Visualize the scene corresponding to the current tab and keep a pointer
 		# to the current scene in the GraphicsWindow instance
-		if self.tabWidget.currentIndex() == 0:
-			self.graphWin.graphicsView.setScene(self.wheelScene)
-		elif self.tabWidget.currentIndex() == 1:
-			self.graphWin.graphicsView.setScene(self.tab2Scene)
-			try:
-				self.calWindow.close()
-			except AttributeError:
-				pass
-			self.calWindow = CalibrationWindow(self)
-			self.calWindow.show()
+		tabIndex = self.tabWidget.currentIndex()
+		self.switchTab(tabIndex)
 
 	def createScene_Wheel(self):
 		"""
@@ -104,18 +105,22 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		scene = QGraphicsScene(parent=self)
 		scene.setBackgroundBrush(Qt.black)
 		thickness = self.tab1_thicknessSpinBox.value()
-		pixelRadius = 100
+		pixelRadius_outer = 100
+		pixelRadius_inner = self.tab1_innerRadiusSpinBox.value()
 		pen = QPen(Qt.white, thickness)
 		
 		# Create the items
-		circle = QGraphicsEllipseItem(-pixelRadius, -pixelRadius, pixelRadius*2, pixelRadius*2)
-		vline = QGraphicsLineItem(0, -pixelRadius, 0, pixelRadius)
-		hline = QGraphicsLineItem(-pixelRadius, 0, pixelRadius, 0)
-		circle.setPen(pen)
+		outer_circle = QGraphicsEllipseItem(-pixelRadius_outer, -pixelRadius_outer, pixelRadius_outer*2, pixelRadius_outer*2)
+		inner_circle = QGraphicsEllipseItem(-pixelRadius_inner, -pixelRadius_inner, pixelRadius_inner*2, pixelRadius_inner*2)
+		vline = QGraphicsLineItem(0, -pixelRadius_outer, 0, pixelRadius_outer)
+		hline = QGraphicsLineItem(-pixelRadius_outer, 0, pixelRadius_outer, 0)
+		outer_circle.setPen(pen)
+		inner_circle.setPen(pen)
 		vline.setPen(pen)
 		hline.setPen(pen)
 		wheel = QGraphicsItemGroup()
-		wheel.addToGroup(circle)
+		wheel.addToGroup(outer_circle)
+		wheel.addToGroup(inner_circle)
 		wheel.addToGroup(vline)
 		wheel.addToGroup(hline)
 		wheel.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make the item movable
@@ -132,7 +137,127 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.wheelScene_updateParameters()
 		
 		return scene
+
+	def wheelScene_updateProperties(self):
+		"""
+		Update the properties of the scene
+		"""
 		
+		thickness = self.tab1_thicknessSpinBox.value()
+		scale = self.tab1_scaleSpinBox.value()
+		innerRadius = self.tab1_innerRadiusSpinBox.value()
+		
+		if self.actionInvert.isChecked():
+			pen = QPen(Qt.black, thickness)
+		else:
+			pen = QPen(Qt.white, thickness)
+		
+		for item in self.wheelScene.items()[0:3]:
+			item.setPen(pen)
+		
+		self.wheelScene.items()[4].setScale(scale)
+		self.wheelScene.items()[2].setRect(-innerRadius, -innerRadius, innerRadius*2, innerRadius*2)
+	
+	def wheelScene_startRotation(self):
+		"""
+		Start the rotation of the wheel
+		"""
+		
+		unitRotation = 0.1 # seconds
+		timeline = QTimeLine(unitRotation * 1000)
+		timeline.setFrameRange(0, 1)
+		timeline.setUpdateInterval(1)
+		timeline.setCurveShape(3)
+		self.rotation = QGraphicsItemAnimation()
+		self.rotation.setTimeLine(timeline)
+		
+		self.connect(timeline, SIGNAL("finished()"), self.wheelScene_startRotation)
+		self.connect(self.tab1_stopPushButton, SIGNAL("clicked()"), timeline.stop)
+		
+		angularV = self.tab1_speedSpinBox.value()
+		initial = self.wheelAngle
+		if initial > 360:
+			initial -= 360
+		final = initial + angularV * 360 * unitRotation
+		self.wheelAngle = final
+		
+		self.rotation.setRotationAt(0, initial)
+		self.rotation.setRotationAt(1, final)
+		self.rotation.setItem(self.wheelScene.items()[3])
+		timeline.start()
+	
+	def wheelScene_updateParameters(self):
+		"""
+		Update the linear velocity, DEP and centripetal force according to the
+		values of the parameters
+		"""
+		
+		# Linear velocity
+		angularV_SI = self.tab1_speedSpinBox.value() * 2 * math.pi				# rad/s
+		linearV = angularV_SI * self.tab1_distanceSpinBox.value()				# In um/s
+		self.tab1_linVelocityLcdNumber.display(linearV)
+		
+		# DEP, which, at constant velocity, will be exactly the same as the
+		# drag force
+		viscosity_SI = self.tab1_viscositySpinBox.value() * 1e-3			# Pa s
+		pradius_SI = (self.tab1_diameterSpinBox.value() / 2) * 1e-6			# m
+		linearV_SI = linearV * 1e-6											# m/s
+		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N
+		dep = dep_SI * 1e12													# pN
+		self.tab1_forceLcdNumber.display(dep)
+		
+		# Centripetal force
+		distance_SI = self.tab1_distanceSpinBox.value() * 1e-6				# m
+		density_SI = self.tab1_densitySpinBox.value() * 1e3					# Kg/m3
+		beadVolume_SI = 4 * math.pi * pradius_SI**3 / 3						# m3
+		beadMass_SI = density_SI * beadVolume_SI							# Kg
+		centripetal_SI = beadMass_SI * angularV_SI**2 * distance_SI			# In N
+		centripetal = centripetal_SI * 1e12									# pN
+		self.tab1_centripetalLcdNumber.display(centripetal)
+
+	def wheelScene_saveData(self):
+		"""
+		Save parameters to disk
+		"""
+		
+		fname = self.fname_prefix + '_WheelTest' + '.dat' 
+		if os.path.isfile(fname):
+			# Open in append mode
+			file = open(fname, 'a')
+		else:
+			# Open in write mode (create the file) and write header
+			file = open(fname, 'w')
+			
+			scaleHead = 'Scale'
+			thicknessHead = 'Thickness'
+			angularVelocityHead = 'AngularVelocity (rps)'
+			distanceHead = 'Distance (um)'
+			densityHead = 'Density (g/cm3)'
+			diameterHead = 'Particle diameter (um)'
+			viscosityHead = 'Viscosity (mPa s)'
+			linearVelocityHead = 'Linear velocity (um/s)'
+			depHead = 'DEP (pN)'
+			centripetalForceHead = 'Centripetal force (pN)'
+			header = '\t'.join(['# ' + scaleHead, thicknessHead, angularVelocityHead, distanceHead, densityHead, diameterHead, viscosityHead, linearVelocityHead, depHead, centripetalForceHead])
+			file.write('# The Wheel test\n')
+			file.write(header + '\n\n')
+		
+		# Write the values
+		scale = str(self.tab1_scaleSpinBox.value())
+		thickness = str(self.tab1_thicknessSpinBox.value())
+		angularVelocity = str(self.tab1_speedSpinBox.value())			# rps
+		distance = str(self.tab1_distanceSpinBox.value())				# um
+		density = str(self.tab1_densitySpinBox.value())					# g/cm3
+		diameter = str(self.tab1_diameterSpinBox.value())				# um
+		viscosity = str(self.tab1_viscositySpinBox.value())				# mPa s
+		linearVelocity = str(self.tab1_linVelocityLcdNumber.value())		# um/s
+		dep = str(self.tab1_forceLcdNumber.value())						# pN
+		centripetalForce = str(self.tab1_centripetalLcdNumber.value())	# pN
+		recordLine = '\t'.join([scale, thickness, angularVelocity, distance, density, diameter, viscosity, linearVelocity, dep, centripetalForce])
+		file.write(recordLine + '\n')
+			
+		file.close()
+
 	def createScene_Tab2(self):
 		"""
 		Creates the scene of the second tab
@@ -191,124 +316,34 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		scene.addItem(brcorner)
 
 		return scene
-			
-	def wheelScene_updateProperties(self):
-		"""
-		Update the properties of the scene
-		"""
-		
-		thickness = self.tab1_thicknessSpinBox.value()
-		scale = self.tab1_scaleSpinBox.value()
-		
-		if self.actionInvert.isChecked():
-			pen = QPen(Qt.black, thickness)
-		else:
-			pen = QPen(Qt.white, thickness)
-		
-		for item in self.wheelScene.items()[0:3]:
-			item.setPen(pen)
-		
-		self.wheelScene.items()[3].setScale(scale)
-	
-	def wheelScene_startRotation(self):
-		"""
-		Start the rotation of the wheel
-		"""
-		
-		unitRotation = 0.1 # seconds
-		timeline = QTimeLine(unitRotation * 1000)
-		timeline.setFrameRange(0, 1)
-		timeline.setUpdateInterval(1)
-		timeline.setCurveShape(3)
-		self.rotation = QGraphicsItemAnimation()
-		self.rotation.setTimeLine(timeline)
-		
-		self.connect(timeline, SIGNAL("finished()"), self.wheelScene_startRotation)
-		self.connect(self.tab1_stopPushButton, SIGNAL("clicked()"), timeline.stop)
-		
-		angularV = self.tab1_speedSpinBox.value()
-		initial = self.wheelAngle
-		if initial > 360:
-			initial -= 360
-		final = initial + angularV * 360 * unitRotation
-		self.wheelAngle = final
-		
-		self.rotation.setRotationAt(0, initial)
-		self.rotation.setRotationAt(1, final)
-		self.rotation.setItem(self.wheelScene.items()[3])
-		timeline.start()
-	
-	def wheelScene_updateParameters(self):
-		"""
-		Update the linear velocity, DEP and centripetal force according to the
-		values of the parameters
-		"""
-		
-		# Linear velocity
-		angularV_SI = self.tab1_speedSpinBox.value() * 2 * math.pi				# rad/s
-		linearV = angularV_SI * self.tab1_distanceSpinBox.value()				# In um/s
-		self.tab1_linVelocityLcdNumber.display(linearV)
-		
-		# DEP, which, at constant velocity, will be exactly the same as the
-		# drag force
-		viscosity_SI = self.tab1_viscositySpinBox.value() * 1e-3					# Pa s
-		pradius_SI = (self.tab1_diameterSpinBox.value() / 2) * 1e-6				# m
-		linearV_SI = linearV * 1e-6											# m/s
-		dep_SI = 6 * math.pi * viscosity_SI * pradius_SI * linearV_SI		# N
-		dep = dep_SI * 1e12													# pN
-		self.tab1_forceLcdNumber.display(dep)
-		
-		# Centripetal force
-		distance_SI = self.tab1_distanceSpinBox.value() * 1e-6					# m
-		density_SI = self.tab1_densitySpinBox.value() * 1e3						# Kg/m3
-		beadVolume_SI = 4 * math.pi * pradius_SI**3 / 3						# m3
-		beadMass_SI = density_SI * beadVolume_SI							# Kg
-		centripetal_SI = beadMass_SI * angularV_SI**2 * distance_SI			# In N
-		centripetal = centripetal_SI * 1e12									# pN
-		self.tab1_centripetalLcdNumber.display(centripetal)
 
-	def wheelScene_saveData(self):
+	def createScene_Shapes(self):
 		"""
-		Save parameters to disk
+		Creates a scene where we can choose among different basic shapes
 		"""
 		
-		fname = self.fname_prefix + '_WheelTest' + '.dat' 
-		if os.path.isfile(fname):
-			# Open in append mode
-			file = open(fname, 'a')
-		else:
-			# Open in write mode (create the file) and write header
-			file = open(fname, 'w')
-			
-			scaleHead = 'Scale'
-			thicknessHead = 'Thickness'
-			angularVelocityHead = 'AngularVelocity (rps)'
-			distanceHead = 'Distance (um)'
-			densityHead = 'Density (g/cm3)'
-			diameterHead = 'Particle diameter (um)'
-			viscosityHead = 'Viscosity (mPa s)'
-			linearVelocityHead = 'Linear velocity (um/s)'
-			depHead = 'DEP (pN)'
-			centripetalForceHead = 'Centripetal force (pN)'
-			header = '\t'.join(['# ' + scaleHead, thicknessHead, angularVelocityHead, distanceHead, densityHead, diameterHead, viscosityHead, linearVelocityHead, depHead, centripetalForceHead])
-			file.write('# The Wheel test\n')
-			file.write(header + '\n\n')
+		# Create the scene and set some basic properties
+		scene = QGraphicsScene(parent=self)
+		scene.setBackgroundBrush(Qt.black)
+		thickness = 1
+		pen = QPen(Qt.white, thickness)
 		
-		# Write the values
-		scale = str(self.tab1_scaleSpinBox.value())
-		thickness = str(self.tab1_thicknessSpinBox.value())
-		angularVelocity = str(self.tab1_speedSpinBox.value())			# rps
-		distance = str(self.tab1_distanceSpinBox.value())				# um
-		density = str(self.tab1_densitySpinBox.value())					# g/cm3
-		diameter = str(self.tab1_diameterSpinBox.value())				# um
-		viscosity = str(self.tab1_viscositySpinBox.value())				# mPa s
-		linearVelocity = str(self.tab1_linVelocityLcdNumber.value())		# um/s
-		dep = str(self.tab1_forceLcdNumber.value())						# pN
-		centripetalForce = str(self.tab1_centripetalLcdNumber.value())	# pN
-		recordLine = '\t'.join([scale, thickness, angularVelocity, distance, density, diameter, viscosity, linearVelocity, dep, centripetalForce])
-		file.write(recordLine + '\n')
-			
-		file.close()
+		return scene
+	
+	def shapesScene_update(self):
+		"""
+		Removes the item currently displayed in the scene and adds the
+		currently selected item
+		"""
+		
+		selectedShape = self.tab3_shapesComboBox.currentIndex()
+		thickness = self.tab3_thicknessSpinBox.value()
+		filled = self.tab3_filledCheckBox.isChecked()
+		
+		if selectedShape == 0:
+			print 'Circle', thickness, filled
+		elif selectedShape == 1:
+			print 'Rectangle', thickness, filled
 
 	def updateColors(self, inverted):
 		"""
@@ -316,7 +351,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		"""
 		
 		if inverted:
-			# Modify the Wheel
+			# Modify the Wheel scene
 			self.wheelScene.setBackgroundBrush(Qt.white)
 			for item in self.wheelScene.items():
 				try:
@@ -326,7 +361,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 				except AttributeError:
 					pass
 			
-			# Modify the second tab
+			# Modify the second scene
 			self.tab2Scene.setBackgroundBrush(Qt.white)
 			for item in self.tab2Scene.items():
 				try:
@@ -335,8 +370,18 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 					item.setPen(pen)
 				except AttributeError:
 					pass
+					
+			# Modify the Shapes scene
+			self.shapesScene.setBackgroundBrush(Qt.white)
+			for item in self.shapesScene.items():
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.black)
+					item.setPen(pen)
+				except AttributeError:
+					pass
 		else:
-			# Modify the Wheel
+			# Modify the Wheel scene
 			self.wheelScene.setBackgroundBrush(Qt.black)
 			for item in self.wheelScene.items():
 				try:
@@ -346,9 +391,19 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 				except AttributeError:
 					pass
 			
-			# Modify the second tab
+			# Modify the second scene
 			self.tab2Scene.setBackgroundBrush(Qt.black)
 			for item in self.tab2Scene.items():
+				try:
+					pen = item.pen()
+					pen.setBrush(Qt.white)
+					item.setPen(pen)
+				except AttributeError:
+					pass
+			
+			# Modify the Shapes scene
+			self.shapesScene.setBackgroundBrush(Qt.black)
+			for item in self.shapesScene.items():
 				try:
 					pen = item.pen()
 					pen.setBrush(Qt.white)
@@ -375,6 +430,13 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 				pass
 			self.calWindow = CalibrationWindow(self)
 			self.calWindow.show()
+			self.connect(self.tab2_opacitySpinBox, SIGNAL("valueChanged(double)"), self.calWindow.changeOpacity)
+		elif tabindex == 2:
+			self.graphWin.graphicsView.setScene(self.shapesScene)
+			try:
+				self.calWindow.close()
+			except AttributeError:
+				pass
 
 
 class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
