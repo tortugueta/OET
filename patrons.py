@@ -11,6 +11,7 @@
 #	solve because when I stop an animation mid-play, I don't know how to fetch
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
+# This is a test.
 
 import sys
 import os
