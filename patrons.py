@@ -12,7 +12,7 @@
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
 # TODO: In tab2, add a flag to add fill to the trap (to fill, create brush and
-#	set it to the item
+#	set it to the item, as well as other controls
 
 import sys
 import os
@@ -71,6 +71,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.tab3_scaleSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		self.connect(self.tab3_rotationSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		self.connect(self.tab3_filledCheckBox, SIGNAL("stateChanged(int)"), self.shapesScene_update)
+		self.connect(self.tab3_nrowsSpinBox, SIGNAL("valueChanged(int)"), self.shapesScene_update)
+		self.connect(self.tab3_ncolumnsSpinBox, SIGNAL("valueChanged(int)"), self.shapesScene_update)
+		self.connect(self.tab3_rowPitchSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
+		self.connect(self.tab3_columnPitchSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		
 		# Grab the current date for the filename
 		now = datetime.datetime.now()
@@ -335,19 +339,29 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		currently selected item
 		"""
 		
+		# Remove the existing shape in order to draw the new one, but get its
+		# position
 		try:
-			pos = self.shapesScene.items()[0].pos()
-			self.shapesScene.removeItem(self.shapesScene.items()[0])
+			for item in self.shapesScene.items()[0:-1]:
+				self.shapesScene.removeItem(item)
 		except IndexError:
 			pos = QPointF(0, 0)
 		
+		# Read the parameters set in the interface
 		selectedShape = self.tab3_shapesComboBox.currentIndex()
 		thickness = self.tab3_thicknessSpinBox.value()
 		scale = self.tab3_scaleSpinBox.value()
 		angle = self.tab3_rotationSpinBox.value()
 		filled = self.tab3_filledCheckBox.isChecked()
-		radius = 100
-		
+		nrows = self.tab3_nrowsSpinBox.value()
+		ncolumns = self.tab3_ncolumnsSpinBox.value()
+		row_pitch = self.tab3_rowPitchSpinBox.value()
+		column_pitch = self.tab3_columnPitchSpinBox.value()
+		radius = 50 # This is the radius for the circles and half the size for the rectangles
+		row_period = 2 * radius + row_pitch
+		column_period = 2 * radius + column_pitch
+				
+		# Set the colors accoding to the "Invert" selection
 		if self.actionInvert.isChecked():
 			pen = QPen(Qt.black, thickness)
 			brush = QBrush(Qt.black)
@@ -355,19 +369,39 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			pen = QPen(Qt.white, thickness)
 			brush = QBrush(Qt.white)
 		
+		# Code specific to each shape selection
 		if selectedShape == 0:
-			item = QGraphicsEllipseItem(-radius, -radius, radius*2, radius*2)
+			# Code for the circle
+			circleList = [QGraphicsEllipseItem(0 + column * column_period, 0 - row * row_period, radius * 2,  radius * 2)
+				for row in xrange(nrows)
+				for column in xrange(ncolumns)]
+			item = QGraphicsItemGroup()
+			for circle in circleList:
+				circle.setPen(pen)
+				if filled:
+					circle.setBrush(brush)
+				item.addToGroup(circle)
+			item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
+			item.setPos(-item.boundingRect().width()/2, item.boundingRect().height()/2)
+			item.setRotation(angle)
+			self.shapesScene.addItem(item)
+			item.setScale(scale)
 		elif selectedShape == 1:
-			item = QGraphicsRectItem(-radius, -radius, radius*2, radius*2)
-		
-		item.setPen(pen)
-		if filled:
-			item.setBrush(brush)
-		item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
-		item.setPos(pos)
-		item.setRotation(angle)
-		self.shapesScene.addItem(item)
-		item.setScale(scale)
+			# Code for the rectangle
+			rectangleList = [QGraphicsRectItem(0 + column * column_period, 0 - row * row_period,  radius * 2, radius * 2)
+				for row in xrange(nrows)
+				for column in xrange(ncolumns)]
+			item = QGraphicsItemGroup()
+			for rectangle in rectangleList:
+				rectangle.setPen(pen)
+				if filled:
+					rectangle.setBrush(brush)
+				item.addToGroup(rectangle)
+			item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
+			item.setPos(-item.boundingRect().width()/2, item.boundingRect().height()/2)
+			item.setRotation(angle)
+			self.shapesScene.addItem(item)
+			item.setScale(scale)
 
 	def updateColors(self, inverted):
 		"""
@@ -485,11 +519,8 @@ class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 		What to do when we resize the window
 		"""
 
-		QDialog.resizeEvent(self, event)
-		
 		newWidth = event.size().width()
 		newHeight = event.size().height()
-		self.graphicsView.setSceneRect(-newWidth/2, -newHeight/2, newWidth/2, newHeight/2)
 		
 		# Check to which tab the current scene corresponds, and act accordingly
 		currentTab = self.parent().tabWidget.currentIndex()
@@ -497,19 +528,23 @@ class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 			self.resizeEvent_wheel(event)
 		elif currentTab == 1:
 			self.resizeEvent_tab2(event, newWidth, newHeight)
+		elif currentTab == 2:
+			self.resizeEvent_shapes(event)
 	
 	def resizeEvent_wheel(self, event):
 		"""
 		What to do in the Wheel scene when we resize the window
 		"""
 		
-		pass
+		QDialog.resizeEvent(self, event)
 		
 	def resizeEvent_tab2(self, event, newWidth, newHeight):
 		"""
 		What to do in the tab2 scene when we resize the window
 		"""
-		
+
+		QDialog.resizeEvent(self, event)
+		self.graphicsView.setSceneRect(-newWidth/2, -newHeight/2, newWidth/2, newHeight/2)
 		scene = self.graphicsView.scene()
 		if scene != None:
 			tlcorner = scene.items()[-1]
@@ -522,6 +557,13 @@ class GraphicsWindow(QDialog, graphics_window.Ui_GraphicsWindow):
 			trcorner.setPos(self.graphicsView.mapToScene(newWidth-25, 0)) # For some reason I need the 25 pixel offset
 			brcorner.setPos(self.graphicsView.mapToScene(newWidth-25, newHeight-25)) # For some reason I need the 25 pixel offset
 
+	def resizeEvent_shapes(self, event):
+		"""
+		What to do in the Shapes scene when we resize the window
+		"""
+		
+		QDialog.resizeEvent(self, event)
+		
 
 class CalibrationWindow(QDialog, calibrationWindow.Ui_calibrationWindow):
 	"""

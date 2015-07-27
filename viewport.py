@@ -10,7 +10,7 @@ class ViewPort(QGraphicsView):
 	def __init__(self, parent=None):
 		QGraphicsView.__init__(self, parent)
 		
-		self.setSceneRect(-self.width()/2, -self.height()/2, self.width()/2, self.height()/2)
+		#self.setSceneRect(-self.width()/2, -self.height()/2, self.width()/2, self.height()/2)
 		self.clicked = False
 	
 	def mousePressEvent(self, event):
