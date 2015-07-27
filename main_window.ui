@@ -37,7 +37,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="wheelTab">
        <attribute name="title">
@@ -988,6 +988,13 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="tab2_filledCheckBox">
+          <property name="text">
+           <string>Filled</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_2">

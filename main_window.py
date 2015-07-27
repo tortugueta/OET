@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Fri Jul 24 17:27:34 2015
+# Created: Mon Jul 27 11:56:28 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -400,6 +400,9 @@ class Ui_MainWindow(object):
         self.tab2_opacitySpinBox.setObjectName(_fromUtf8("tab2_opacitySpinBox"))
         self.verticalLayout_17.addWidget(self.tab2_opacitySpinBox)
         self.verticalLayout_18.addLayout(self.verticalLayout_17)
+        self.tab2_filledCheckBox = QtGui.QCheckBox(self.testTab)
+        self.tab2_filledCheckBox.setObjectName(_fromUtf8("tab2_filledCheckBox"))
+        self.verticalLayout_18.addWidget(self.tab2_filledCheckBox)
         spacerItem1 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_18.addItem(spacerItem1)
         self.tabWidget.addTab(self.testTab, _fromUtf8(""))
@@ -560,7 +563,7 @@ class Ui_MainWindow(object):
         self.tab3_columnPitchLabel.setBuddy(self.tab3_columnPitchSpinBox)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tab1_scaleSpinBox, self.tab1_thicknessSpinBox)
@@ -607,6 +610,7 @@ class Ui_MainWindow(object):
         self.tab2_thicknessLabel.setText(_translate("MainWindow", "&Thickness", None))
         self.tab2_travelTimeLabel.setText(_translate("MainWindow", "T&ravel time (s)", None))
         self.tab2_opacityLabel.setText(_translate("MainWindow", "Opacity", None))
+        self.tab2_filledCheckBox.setText(_translate("MainWindow", "Filled", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.testTab), _translate("MainWindow", "Select and Move", None))
         self.tab3_filledCheckBox.setText(_translate("MainWindow", "Filled", None))
         self.tab3_thicknessLabel.setText(_translate("MainWindow", "Thickness", None))

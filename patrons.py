@@ -11,8 +11,6 @@
 #	solve because when I stop an animation mid-play, I don't know how to fetch
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
-# TODO: In tab2, add a flag to add fill to the trap (to fill, create brush and
-#	set it to the item, as well as other controls
 
 import sys
 import os
@@ -428,6 +426,11 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 					item.setPen(pen)
 				except AttributeError:
 					pass
+				if self.tab2_filledCheckBox.isChecked():
+					try:
+						item.setBrush(Qt.black)
+					except AttributeError:
+						pass
 					
 			# Modify the Shapes scene
 			self.shapesScene.setBackgroundBrush(Qt.white)
@@ -439,7 +442,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 				except AttributeError:
 					pass
 				if self.tab3_filledCheckBox.isChecked():
-					item.setBrush(Qt.black)
+					try:
+						item.setBrush(Qt.black)
+					except AttributeError:
+						pass
 		else:
 			# Modify the Wheel scene
 			self.wheelScene.setBackgroundBrush(Qt.black)
@@ -460,6 +466,11 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 					item.setPen(pen)
 				except AttributeError:
 					pass
+				if self.tab2_filledCheckBox.isChecked():
+					try:
+						item.setBrush(Qt.black)
+					except AttributeError:
+						pass
 			
 			# Modify the Shapes scene
 			self.shapesScene.setBackgroundBrush(Qt.black)
@@ -471,7 +482,10 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 				except AttributeError:
 					pass
 				if self.tab3_filledCheckBox.isChecked():
-					item.setBrush(Qt.white)
+					try:
+						item.setBrush(Qt.white)
+					except AttributeError:
+						pass
 	
 	def switchTab(self, tabindex):
 		"""

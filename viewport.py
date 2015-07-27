@@ -46,9 +46,21 @@ class ViewPort(QGraphicsView):
 		if not self.clicked:
 			self.size = self.parent().parent().tab2_sizeSpinBox.value()
 			strokeWidth = self.parent().parent().tab2_thicknessSpinBox.value()
-			pen = QPen(Qt.white, strokeWidth)
 			circle = QGraphicsEllipseItem(0, 0, self.size, self.size)
 			circle.setPos(sceneCoordinates.x() - self.size/2, sceneCoordinates.y() - self.size/2)
+			if self.parent().parent().tab2_filledCheckBox.isChecked():
+				if self.parent().parent().actionInvert.isChecked():
+					brush = QBrush(Qt.black)
+					pen = QPen(Qt.black, strokeWidth)
+				else:
+					brush = QBrush(Qt.white)
+					pen = QPen(Qt.white, strokeWidth)
+				circle.setBrush(brush)
+			else:
+				if self.parent().parent().actionInvert.isChecked():
+					pen = QPen(Qt.black, strokeWidth)
+				else:
+					pen = QPen(Qt.white, strokeWidth)
 			circle.setPen(pen)
 			currentScene.addItem(circle)
 			self.centerOn(0, 0)
