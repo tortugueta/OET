@@ -187,7 +187,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		self.rotation.setRotationAt(0, initial)
 		self.rotation.setRotationAt(1, final)
-		self.rotation.setItem(self.wheelScene.items()[3])
+		self.rotation.setItem(self.wheelScene.items()[-1])
 		timeline.start()
 	
 	def wheelScene_updateParameters(self):
