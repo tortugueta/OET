@@ -12,6 +12,8 @@
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
 # This is a test
+# TODO: Add a flag in the sapes tab that allows to treat each shape in the
+#	array independently (basically, group or not)
 
 import sys
 import os

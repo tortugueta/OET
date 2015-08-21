@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Jul 27 11:56:28 2015
+# Created: Fri Aug 21 10:46:17 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -563,10 +563,11 @@ class Ui_MainWindow(object):
         self.tab3_columnPitchLabel.setBuddy(self.tab3_columnPitchSpinBox)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.tab1_scaleSpinBox, self.tab1_thicknessSpinBox)
+        MainWindow.setTabOrder(self.tab1_scaleSpinBox, self.tab1_innerRadiusSpinBox)
+        MainWindow.setTabOrder(self.tab1_innerRadiusSpinBox, self.tab1_thicknessSpinBox)
         MainWindow.setTabOrder(self.tab1_thicknessSpinBox, self.tab1_speedSpinBox)
         MainWindow.setTabOrder(self.tab1_speedSpinBox, self.tab1_distanceSpinBox)
         MainWindow.setTabOrder(self.tab1_distanceSpinBox, self.tab1_diameterSpinBox)
@@ -575,6 +576,21 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.tab1_viscositySpinBox, self.tab1_engagePushButton)
         MainWindow.setTabOrder(self.tab1_engagePushButton, self.tab1_stopPushButton)
         MainWindow.setTabOrder(self.tab1_stopPushButton, self.tab1_recordPushButton)
+        MainWindow.setTabOrder(self.tab1_recordPushButton, self.tabWidget)
+        MainWindow.setTabOrder(self.tabWidget, self.tab2_sizeSpinBox)
+        MainWindow.setTabOrder(self.tab2_sizeSpinBox, self.tab2_thicknessSpinBox)
+        MainWindow.setTabOrder(self.tab2_thicknessSpinBox, self.tab2_travelTimeSpinBox)
+        MainWindow.setTabOrder(self.tab2_travelTimeSpinBox, self.tab2_opacitySpinBox)
+        MainWindow.setTabOrder(self.tab2_opacitySpinBox, self.tab2_filledCheckBox)
+        MainWindow.setTabOrder(self.tab2_filledCheckBox, self.tab3_shapesComboBox)
+        MainWindow.setTabOrder(self.tab3_shapesComboBox, self.tab3_filledCheckBox)
+        MainWindow.setTabOrder(self.tab3_filledCheckBox, self.tab3_thicknessSpinBox)
+        MainWindow.setTabOrder(self.tab3_thicknessSpinBox, self.tab3_scaleSpinBox)
+        MainWindow.setTabOrder(self.tab3_scaleSpinBox, self.tab3_rotationSpinBox)
+        MainWindow.setTabOrder(self.tab3_rotationSpinBox, self.tab3_nrowsSpinBox)
+        MainWindow.setTabOrder(self.tab3_nrowsSpinBox, self.tab3_ncolumnsSpinBox)
+        MainWindow.setTabOrder(self.tab3_ncolumnsSpinBox, self.tab3_rowPitchSpinBox)
+        MainWindow.setTabOrder(self.tab3_rowPitchSpinBox, self.tab3_columnPitchSpinBox)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "OET", None))

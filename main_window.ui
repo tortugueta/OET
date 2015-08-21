@@ -37,7 +37,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="wheelTab">
        <attribute name="title">
@@ -1324,6 +1324,7 @@
  </widget>
  <tabstops>
   <tabstop>tab1_scaleSpinBox</tabstop>
+  <tabstop>tab1_innerRadiusSpinBox</tabstop>
   <tabstop>tab1_thicknessSpinBox</tabstop>
   <tabstop>tab1_speedSpinBox</tabstop>
   <tabstop>tab1_distanceSpinBox</tabstop>
@@ -1333,6 +1334,21 @@
   <tabstop>tab1_engagePushButton</tabstop>
   <tabstop>tab1_stopPushButton</tabstop>
   <tabstop>tab1_recordPushButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>tab2_sizeSpinBox</tabstop>
+  <tabstop>tab2_thicknessSpinBox</tabstop>
+  <tabstop>tab2_travelTimeSpinBox</tabstop>
+  <tabstop>tab2_opacitySpinBox</tabstop>
+  <tabstop>tab2_filledCheckBox</tabstop>
+  <tabstop>tab3_shapesComboBox</tabstop>
+  <tabstop>tab3_filledCheckBox</tabstop>
+  <tabstop>tab3_thicknessSpinBox</tabstop>
+  <tabstop>tab3_scaleSpinBox</tabstop>
+  <tabstop>tab3_rotationSpinBox</tabstop>
+  <tabstop>tab3_nrowsSpinBox</tabstop>
+  <tabstop>tab3_ncolumnsSpinBox</tabstop>
+  <tabstop>tab3_rowPitchSpinBox</tabstop>
+  <tabstop>tab3_columnPitchSpinBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
