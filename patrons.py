@@ -1,5 +1,10 @@
 #! /usr/bin/python
 # FIXME: for some reason the wheel does not appear centered
+# FIXME: when I change some property in the shapes tab, the shape repositions
+#	itself
+# The two previous FIXMES are related to the absolutely retarded way in which
+# 	the Qt view looks at the Qt Scene. I still have to figure out how to
+#	properly handle it.
 # FIXME: The scene creation, animations and stuff, should probably be coded in
 #	the GraphicsWindow class, not in the MainWindow
 # FIXME: When I create the corners in tab2 and also when I resize them, I need
@@ -12,8 +17,6 @@
 #	the current angle of the figure.
 # FIXME: the GraphicsWindow should be a MainWindow instad of a QDialog
 # This is a test
-# TODO: Add a flag in the sapes tab that allows to treat each shape in the
-#	array independently (basically, group or not)
 
 import sys
 import os
@@ -72,6 +75,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		self.connect(self.tab3_scaleSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		self.connect(self.tab3_rotationSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
 		self.connect(self.tab3_filledCheckBox, SIGNAL("stateChanged(int)"), self.shapesScene_update)
+		self.connect(self.tab3_groupedCheckBox, SIGNAL("stateChanged(int)"), self.shapesScene_update)
 		self.connect(self.tab3_nrowsSpinBox, SIGNAL("valueChanged(int)"), self.shapesScene_update)
 		self.connect(self.tab3_ncolumnsSpinBox, SIGNAL("valueChanged(int)"), self.shapesScene_update)
 		self.connect(self.tab3_rowPitchSpinBox, SIGNAL("valueChanged(double)"), self.shapesScene_update)
@@ -342,11 +346,13 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		
 		# Remove the existing shape in order to draw the new one, but get its
 		# position
-		try:
-			for item in self.shapesScene.items()[0:-1]:
+		positionList = []
+		for item in self.shapesScene.items():
+			try:
+				positionList.append(item.pos())
 				self.shapesScene.removeItem(item)
-		except IndexError:
-			pos = QPointF(0, 0)
+			except IndexError:
+				pass
 		
 		# Read the parameters set in the interface
 		selectedShape = self.tab3_shapesComboBox.currentIndex()
@@ -354,6 +360,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		scale = self.tab3_scaleSpinBox.value()
 		angle = self.tab3_rotationSpinBox.value()
 		filled = self.tab3_filledCheckBox.isChecked()
+		grouped = self.tab3_groupedCheckBox.isChecked()
 		nrows = self.tab3_nrowsSpinBox.value()
 		ncolumns = self.tab3_ncolumnsSpinBox.value()
 		row_pitch = self.tab3_rowPitchSpinBox.value()
@@ -379,14 +386,21 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 			item = QGraphicsItemGroup()
 			for circle in circleList:
 				circle.setPen(pen)
+				circle.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
+				circle.setRotation(angle)
 				if filled:
 					circle.setBrush(brush)
-				item.addToGroup(circle)
-			item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
-			item.setPos(-item.boundingRect().width()/2, item.boundingRect().height()/2)
-			item.setRotation(angle)
-			self.shapesScene.addItem(item)
-			item.setScale(scale)
+				if grouped:
+					item.addToGroup(circle)
+				else:
+					circle.setScale(scale)
+					self.shapesScene.addItem(circle)
+			if grouped:
+				item.setFlags(QGraphicsItem.GraphicsItemFlags(1)) # Make item movable
+				self.shapesScene.addItem(item)
+				#item.setPos(-item.boundingRect().width()/2, item.boundingRect().height()/2)
+				item.setScale(scale)
+			
 		elif selectedShape == 1:
 			# Code for the rectangle
 			rectangleList = [QGraphicsRectItem(0 + column * column_period, 0 - row * row_period,  radius * 2, radius * 2)

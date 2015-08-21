@@ -1020,14 +1020,28 @@
          <widget class="QComboBox" name="tab3_shapesComboBox"/>
         </item>
         <item>
-         <widget class="QCheckBox" name="tab3_filledCheckBox">
-          <property name="text">
-           <string>Filled</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="tab3_filledCheckBox">
+            <property name="text">
+             <string>Filled</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tab3_groupedCheckBox">
+            <property name="text">
+             <string>Grouped</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_19">

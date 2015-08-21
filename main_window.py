@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Fri Aug 21 10:46:17 2015
+# Created: Fri Aug 21 10:55:05 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -413,10 +413,17 @@ class Ui_MainWindow(object):
         self.tab3_shapesComboBox = QtGui.QComboBox(self.shapesTab)
         self.tab3_shapesComboBox.setObjectName(_fromUtf8("tab3_shapesComboBox"))
         self.verticalLayout_27.addWidget(self.tab3_shapesComboBox)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.tab3_filledCheckBox = QtGui.QCheckBox(self.shapesTab)
         self.tab3_filledCheckBox.setChecked(True)
         self.tab3_filledCheckBox.setObjectName(_fromUtf8("tab3_filledCheckBox"))
-        self.verticalLayout_27.addWidget(self.tab3_filledCheckBox)
+        self.horizontalLayout_2.addWidget(self.tab3_filledCheckBox)
+        self.tab3_groupedCheckBox = QtGui.QCheckBox(self.shapesTab)
+        self.tab3_groupedCheckBox.setChecked(True)
+        self.tab3_groupedCheckBox.setObjectName(_fromUtf8("tab3_groupedCheckBox"))
+        self.horizontalLayout_2.addWidget(self.tab3_groupedCheckBox)
+        self.verticalLayout_27.addLayout(self.horizontalLayout_2)
         self.verticalLayout_19 = QtGui.QVBoxLayout()
         self.verticalLayout_19.setObjectName(_fromUtf8("verticalLayout_19"))
         self.tab3_thicknessLabel = QtGui.QLabel(self.shapesTab)
@@ -629,6 +636,7 @@ class Ui_MainWindow(object):
         self.tab2_filledCheckBox.setText(_translate("MainWindow", "Filled", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.testTab), _translate("MainWindow", "Select and Move", None))
         self.tab3_filledCheckBox.setText(_translate("MainWindow", "Filled", None))
+        self.tab3_groupedCheckBox.setText(_translate("MainWindow", "Grouped", None))
         self.tab3_thicknessLabel.setText(_translate("MainWindow", "Thickness", None))
         self.tab3_scaleLabel.setText(_translate("MainWindow", "Scale", None))
         self.tab3_rotationLabel.setText(_translate("MainWindow", "Rotation (deg)", None))
