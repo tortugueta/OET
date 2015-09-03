@@ -162,7 +162,7 @@ class MainWindow(QMainWindow, main_window.Ui_MainWindow):
 		else:
 			pen = QPen(Qt.white, thickness)
 		
-		for item in self.wheelScene.items()[0:3]:
+		for item in self.wheelScene.items()[0:4]:
 			item.setPen(pen)
 		
 		self.wheelScene.items()[4].setScale(scale)
